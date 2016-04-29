@@ -24,15 +24,17 @@ import io.sundr.codegen.model.JavaTypeBuilder;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.VariableElement;
-import java.util.HashSet;
+import javax.lang.model.util.Elements;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class VariableElementToJavaProperty implements Function<VariableElement, JavaProperty> {
 
+    private final Elements elements;
     private final Function<String, JavaType> toType;
 
-    public VariableElementToJavaProperty(Function<String, JavaType> toType) {
+    public VariableElementToJavaProperty(Elements elements, Function<String, JavaType> toType) {
+        this.elements = elements;
         this.toType = toType;
     }
 
@@ -42,6 +44,10 @@ public class VariableElementToJavaProperty implements Function<VariableElement, 
         boolean isArray = variableElement.asType().toString().endsWith("[]");
         JavaType type = new JavaTypeBuilder(toType.apply(variableElement.asType().toString())).withArray(isArray).build();
 
+        String comment = elements.getDocComment(variableElement);
+        if (comment != null && !comment.isEmpty()) {
+            System.out.println("Comment here:"+ comment);
+        }
         Set<JavaType> annotations = new LinkedHashSet<JavaType>();
         for (AnnotationMirror annotationMirror : variableElement.getAnnotationMirrors()) {
             JavaType annotationType = toType.apply(annotationMirror.getAnnotationType().toString());

@@ -94,7 +94,7 @@ public class BuilderContext {
         this.inlineables = inlineables;
 
         stringJavaTypeFunction = CachingFunction.wrap(new ToBuildableJavaType(elements));
-        variableElementJavaPropertyFunction = CachingFunction.wrap(new ToBuildableJavaProperty(stringJavaTypeFunction));
+        variableElementJavaPropertyFunction = CachingFunction.wrap(new ToBuildableJavaProperty(stringJavaTypeFunction, elements));
         executableElementToJavaMethod = CachingFunction.wrap(new ExecutableElementToJavaMethod(stringJavaTypeFunction, variableElementJavaPropertyFunction));
         typeElementToJavaClazz = CachingFunction.wrap(new ToBuildableJavaClazz(new TypeElementToJavaClazz(elements, stringJavaTypeFunction, executableElementToJavaMethod, variableElementJavaPropertyFunction)));
         stringToJavaClazz = CachingFunction.wrap(new StringToJavaClazz(elements, typeElementToJavaClazz));

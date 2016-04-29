@@ -72,7 +72,7 @@ public class DslProcessorContext {
     public DslProcessorContext(Elements elements, Types types) {
         this.elements = elements;
         this.toType = new StringToJavaType(elements);
-        this.toProperty = new VariableElementToJavaProperty(toType);
+        this.toProperty = new VariableElementToJavaProperty(elements, toType);
         this.toMethod = new ExecutableElementToJavaMethod(toType, toProperty);
         this.toRequiresAny = new ToRequiresAny(elements);
         this.toRequiresAll = new ToRequiresAll(elements);

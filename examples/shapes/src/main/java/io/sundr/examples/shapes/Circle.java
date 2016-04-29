@@ -25,6 +25,9 @@ import io.sundr.builder.annotations.Inline;
 })
 public class Circle<T extends Number> extends AbstractShape {
 
+    /**
+     * The radius of the circle.
+     */
     private final T radius;
     private final Double area;
 

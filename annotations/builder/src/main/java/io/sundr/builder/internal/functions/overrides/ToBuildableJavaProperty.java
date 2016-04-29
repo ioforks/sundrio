@@ -23,16 +23,19 @@ import io.sundr.codegen.model.JavaPropertyBuilder;
 import io.sundr.codegen.model.JavaType;
 
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Elements;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ToBuildableJavaProperty implements Function<VariableElement, JavaProperty> {
     
     private static final String BUILDABLE = "BUILDABLE";
+    private final Elements elements;
     private Function<VariableElement, JavaProperty> delegate;
     
-    public ToBuildableJavaProperty(Function<String, JavaType> toType) {
-        this.delegate = new VariableElementToJavaProperty(toType);
+    public ToBuildableJavaProperty(Function<String, JavaType> toType, Elements elements) {
+        this.elements = elements;
+        this.delegate = new VariableElementToJavaProperty(this.elements, toType);
     }
 
     @Override
