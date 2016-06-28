@@ -26,21 +26,21 @@ import java.util.Map;
 public class ClassRef extends AbstractTypeRef {
 
     public static final ClassRef OBJECT = new ClassRefBuilder()
-            .withDefinition(TypeDef.OBJECT)
+            .withDefinition(ClassDef.OBJECT)
             .build();
 
-    private final TypeDef definition;
+    private final ClassDef definition;
     private final int dimensions;
     private final List<TypeRef> arguments;
 
-    public ClassRef(TypeDef definition, int dimensions, List<TypeRef> arguments, Map<String, Object> attributes) {
+    public ClassRef(ClassDef definition, int dimensions, List<TypeRef> arguments, Map<String, Object> attributes) {
         super(attributes);
-        this.definition = definition != null ? definition : new TypeDefBuilder().build();
+        this.definition = definition != null ? definition : new ClassDefBuilder().build();
         this.dimensions = dimensions;
         this.arguments = arguments;
     }
 
-    public TypeDef getDefinition() {
+    public ClassDef getDefinition() {
         return definition;
     }
 
