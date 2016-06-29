@@ -26,6 +26,8 @@ import java.util.Set;
 public interface TypeDef<T extends TypeDef<T,B>, B extends Builder<T>> {
 
     B edit();
+    Set<ClassRef> getReferences();
+
     Kind getKind();
     String getPackageName();
     String getName();

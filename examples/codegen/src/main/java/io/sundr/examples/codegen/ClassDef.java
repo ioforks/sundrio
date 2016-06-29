@@ -16,7 +16,6 @@
 
 package io.sundr.examples.codegen;
 
-import io.sundr.builder.TypedVisitor;
 import io.sundr.builder.annotations.Buildable;
 import io.sundr.codegen.utils.StringUtils;
 
@@ -64,8 +63,6 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
         }
         return adapted;
     }
-
-
 
     /**
      * Returns the fully qualified name of the type.
@@ -135,10 +132,10 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ClassDef classDef = (ClassDef) o;
+        ClassDef typeDef = (ClassDef) o;
 
-        if (packageName != null ? !packageName.equals(classDef.packageName) : classDef.packageName != null) return false;
-        return name != null ? name.equals(classDef.name) : classDef.name == null;
+        if (packageName != null ? !packageName.equals(typeDef.packageName) : typeDef.packageName != null) return false;
+        return name != null ? name.equals(typeDef.name) : typeDef.name == null;
 
     }
 
@@ -151,7 +148,7 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
 
     /**
      * Creates a {@link ClassRef} for the current definition with the specified arguments.
-     * @param arguments The arguements to be passed to the reference.
+     * @param arguments The arguments to be passed to the reference.
      * @return
      */
     public ClassRef toReference(TypeRef... arguments) {
@@ -196,52 +193,104 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
                 .build();
     }
 
-    public Set<ClassRef> getImports() {
-        final Set<ClassRef> imports = new LinkedHashSet<ClassRef>();
-        new ClassDefBuilder(this).accept(new TypedVisitor<ClassRefBuilder>() {
-            public void visit(ClassRefBuilder builder) {
-                imports.add(builder.build());
+    public Set<String> getImports() {
+        final Set<String> imports = new LinkedHashSet<String>();
+        for (ClassRef ref : getReferences()) {
+            if (ref .getDefinition().getPackageName() == null || ref .getDefinition().getPackageName().isEmpty() ||  ref.getDefinition().getPackageName().equals(packageName)) {
+                continue;
+            } else {
+                imports.add(ref.getDefinition().getFullyQualifiedName());
             }
-        });
+
+        }
         return imports;
     }
+
+    public Set<ClassRef> getReferences() {
+        final Set<ClassRef> refs = new LinkedHashSet<ClassRef>();
+
+        for (ClassRef i : implementsList) {
+            refs.addAll(i.getReferences());
+
+        }
+
+        for (ClassRef e : extendsList) {
+            refs.addAll(e.getReferences());
+        }
+
+        for (Property property : properties) {
+            refs.addAll(property.getReferences());
+        }
+
+        for (Method method : constructors) {
+            refs.addAll(method.getReferences());
+        }
+
+
+        for (Method method : methods) {
+            refs.addAll(method.getReferences());
+        }
+
+        for (TypeParamDef typeParamDef : parameters) {
+            for (ClassRef bound : typeParamDef.getBounds()) {
+                refs.addAll(bound.getReferences());
+            }
+        }
+
+        for (TypeDef innerType : innerTypes) {
+            refs.addAll(innerType.getReferences());
+        }
+
+        if (getAttributes().containsKey(ALSO_IMPORT)) {
+            Object obj = getAttributes().get(ALSO_IMPORT);
+            if (obj instanceof ClassRef) {
+                refs.add((ClassRef) obj);
+            } else if (obj instanceof Collection) {
+                refs.addAll((Collection<? extends ClassRef>) obj);
+            }
+        }
+        return refs;
+    }
+
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (isPublic()) {
-            sb.append("public ");
+            sb.append(PUBLIC).append(SPACE);
         } else if (isProtected()) {
-            sb.append("protected ");
+            sb.append(PROTECTED).append(SPACE);
         } else if (isPrivate()) {
-            sb.append("private ");
+            sb.append(PRIVATE).append(SPACE);
         }
         if (isStatic()) {
-            sb.append("static ");
+            sb.append(STATIC).append(SPACE);
         }
-
+        if (isAbstract()) {
+            sb.append(ABSTRACT).append(SPACE);
+        }
         if (isFinal()) {
-            sb.append("final ");
+            sb.append(FINAL).append(SPACE);
         }
 
-        sb.append(kind.name().toLowerCase()).append(" ");
+        sb.append(kind.name().toLowerCase()).append(SPACE);
         sb.append(name);
 
         if (parameters != null && !parameters.isEmpty()) {
-            sb.append("<");
-            sb.append(StringUtils.join(parameters, ","));
-            sb.append(">");
+            sb.append(LT);
+            sb.append(StringUtils.join(parameters, COMA));
+            sb.append(GT);
         }
 
         if (extendsList != null && !extendsList.isEmpty()
                 && (extendsList.size() != 1 || !extendsList.contains(OBJECT.toReference()))) {
-            sb.append(" extends ");
-            sb.append(StringUtils.join(extendsList, ","));
+            sb.append(SPACE).append(EXTENDS).append(SPACE);
+            sb.append(StringUtils.join(extendsList, COMA));
         }
 
         if (implementsList != null && !implementsList.isEmpty()) {
-            sb.append(" implements ");
-            sb.append(StringUtils.join(implementsList, ","));
+            sb.append(SPACE).append(IMPLEMENTS).append(SPACE);
+            sb.append(StringUtils.join(implementsList, COMA));
         }
 
         return sb.toString();

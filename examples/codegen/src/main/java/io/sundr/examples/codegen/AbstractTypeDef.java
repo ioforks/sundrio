@@ -49,6 +49,23 @@ public abstract class AbstractTypeDef<T extends TypeDef<T,B>, B extends Builder<
         this.innerTypes = setOuterType(innerTypes, this);
     }
 
+    public boolean isClass() {
+        return kind == Kind.INTERFACE;
+    }
+
+    public boolean isInterface() {
+        return kind == Kind.INTERFACE;
+    }
+
+    public boolean isEnum() {
+        return kind == Kind.ENUM;
+    }
+
+    public boolean isAnnotation() {
+        return kind == Kind.ANNOTATION;
+    }
+
+
     /**
      * Returns the fully qualified name of the type.
      *

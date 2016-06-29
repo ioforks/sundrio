@@ -19,11 +19,16 @@ package io.sundr.examples.codegen;
 import io.sundr.builder.annotations.Buildable;
 import io.sundr.codegen.utils.StringUtils;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Buildable
 public class ClassRef extends AbstractTypeRef {
+
+    public static final String UNKWNON = "<unkwnon>";
+    public static final String BRACKETS = "[]";
 
     public static final ClassRef OBJECT = new ClassRefBuilder()
             .withDefinition(ClassDef.OBJECT)
@@ -57,8 +62,19 @@ public class ClassRef extends AbstractTypeRef {
     }
 
     public boolean isAssignableFrom(TypeRef other) {
-        if (other == null) {
+        if (this == other) {
+            return true;
+        } else if (other == null) {
             return false;
+        } else if (other instanceof PrimitiveRef) {
+            if (!getDefinition().getPackageName().equals(JAVA_LANG)) {
+                return false;
+            }
+
+            if(!getDefinition().getName().toUpperCase().startsWith(((PrimitiveRef) other).getName().toUpperCase())) {
+                return false;
+            }
+            return true;
         }
 
         if (!(other instanceof ClassRef)) {
@@ -71,6 +87,18 @@ public class ClassRef extends AbstractTypeRef {
 
         return definition.isAssignableFrom(((ClassRef) other).getDefinition());
     }
+
+    public Set<ClassRef> getReferences() {
+        Set<ClassRef> refs = new LinkedHashSet<ClassRef>();
+        for (TypeRef argument : arguments) {
+            if (argument instanceof ClassRef) {
+                refs.addAll(((ClassRef)argument).getReferences());
+            }
+        }
+        refs.add(this);
+        return refs;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -97,20 +125,23 @@ public class ClassRef extends AbstractTypeRef {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        if (definition != null) {
-            sb.append(definition.getFullyQualifiedName());
+        if (definition == null) {
+            sb.append(UNKWNON);
+        }
+        else if (definition.getOuterType() != null) {
+            sb.append(definition.getOuterType().getName()).append(DOT).append(definition.getName());
         } else {
-            sb.append("<unknown>");
+            sb.append(definition.getName());
         }
 
         if (arguments.size() > 0) {
-            sb.append("<");
-            sb.append(StringUtils.join(arguments, ","));
-            sb.append(">");
+            sb.append(LT);
+            sb.append(StringUtils.join(arguments, COMA));
+            sb.append(GT);
         }
 
         for (int i=0;i<dimensions;i++) {
-            sb.append("[]");
+            sb.append(BRACKETS);
         }
         return sb.toString();
     }

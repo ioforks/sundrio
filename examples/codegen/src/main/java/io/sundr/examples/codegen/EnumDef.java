@@ -19,6 +19,7 @@ package io.sundr.examples.codegen;
 import io.sundr.builder.TypedVisitor;
 import io.sundr.builder.annotations.Buildable;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,52 @@ public class EnumDef extends AbstractTypeDef<EnumDef, EnumDefBuilder> {
         this.properties = properties;
         this.constructors = constructors;
         this.methods = methods;
+    }
+
+    @Override
+    public EnumDefBuilder edit() {
+        return new EnumDefBuilder(this);
+    }
+
+    @Override
+    public Set<ClassRef> getReferences() {
+        final Set<ClassRef> refs = new LinkedHashSet<ClassRef>();
+
+        for (ClassRef i : implementsList) {
+            refs.addAll(i.getReferences());
+
+        }
+
+        for (ClassRef e : extendsList) {
+            refs.addAll(e.getReferences());
+        }
+
+        for (Property property : properties) {
+            refs.addAll(property.getReferences());
+        }
+
+        for (Method method : constructors) {
+            refs.addAll(method.getReferences());
+        }
+
+
+        for (Method method : methods) {
+            refs.addAll(method.getReferences());
+        }
+
+        for (TypeDef innerType : innerTypes) {
+            refs.addAll(innerType.getReferences());
+        }
+
+        if (getAttributes().containsKey(ALSO_IMPORT)) {
+            Object obj = getAttributes().get(ALSO_IMPORT);
+            if (obj instanceof ClassRef) {
+                refs.add((ClassRef) obj);
+            } else if (obj instanceof Collection) {
+                refs.addAll((Collection<? extends ClassRef>) obj);
+            }
+        }
+        return refs;
     }
 
     public Set<Property> getProperties() {
@@ -59,8 +106,6 @@ public class EnumDef extends AbstractTypeDef<EnumDef, EnumDefBuilder> {
         return imports;
     }
 
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,10 +123,5 @@ public class EnumDef extends AbstractTypeDef<EnumDef, EnumDefBuilder> {
         int result = getPackageName() != null ? getPackageName().hashCode() : 0;
         result = 31 * result + (getName() != null ? getName().hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public EnumDefBuilder edit() {
-        return new EnumDefBuilder(this);
     }
 }

@@ -19,14 +19,18 @@ package io.sundr.examples.codegen;
 import io.sundr.builder.annotations.Buildable;
 import io.sundr.codegen.utils.StringUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static io.sundr.codegen.utils.StringUtils.join;
 
 @Buildable
 public class Method extends ModifierSupport {
+    
+    public static final String OP = "(";
+    public static final String CP = ")";
+    public static final String VARARG = "...";
+    public static final String THROWS = "throws";
+
     private final Set<ClassRef> annotations;
     private final Set<TypeParamDef> parameters;
     private final String name;
@@ -81,6 +85,42 @@ public class Method extends ModifierSupport {
         return block;
     }
 
+
+    public Set<ClassRef> getReferences() {
+        Set<ClassRef> refs = new LinkedHashSet<ClassRef>();
+        if (returnType instanceof ClassRef) {
+            ClassRef classRef = (ClassRef)returnType;
+            refs.addAll(classRef.getReferences());
+        }
+
+        for (Property argument : arguments) {
+            refs.addAll(argument.getReferences());
+        }
+
+        for (ClassRef e : exceptions) {
+            refs.addAll(e.getReferences());
+        }
+
+        for (ClassRef a : getAnnotations()) {
+            refs.addAll(a.getReferences());
+        }
+
+        for (TypeParamDef typeParamDef : parameters) {
+            for (ClassRef bound : typeParamDef.getBounds()) {
+                refs.addAll(bound.getReferences());
+            }
+        }
+        if (getAttributes().containsKey(ALSO_IMPORT)) {
+            Object obj = getAttributes().get(ALSO_IMPORT);
+            if (obj instanceof ClassRef) {
+                refs.add((ClassRef) obj);
+            } else if (obj instanceof Collection) {
+                refs.addAll((Collection<? extends ClassRef>) obj);
+            }
+        }
+        return refs;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,60 +147,65 @@ public class Method extends ModifierSupport {
         StringBuilder sb = new StringBuilder();
 
         if (isPublic()) {
-            sb.append("public ");
+            sb.append(PUBLIC).append(SPACE);
         } else if (isProtected()) {
-            sb.append("protected ");
+            sb.append(PROTECTED).append(SPACE);
         } else if (isPrivate()) {
-            sb.append("private ");
+            sb.append(PRIVATE).append(SPACE);
         }
 
         if (isSynchronized()) {
-            sb.append("synchronized ");
+            sb.append(SYNCHRONIZED).append(SPACE);
         }
 
         if (isStatic()) {
-            sb.append("static ");
+            sb.append(STATIC).append(SPACE);
+        }
+
+        if (isAbstract()) {
+            sb.append(ABSTRACT).append(SPACE);
         }
 
         if (isFinal()) {
-            sb.append("final ");
+            sb.append(FINAL).append(SPACE);
         }
 
+
         if (parameters != null && !parameters.isEmpty()) {
-            sb.append("<");
-            sb.append(StringUtils.join(parameters, ","));
-            sb.append(">");
+            sb.append(LT);
+            sb.append(StringUtils.join(parameters, COMA));
+            sb.append(GT);
         }
 
         if (name != null) {
             sb.append(returnType);
-            sb.append(" ").append(name);
+            sb.append(SPACE).append(name);
         } else {
             //This is a constructor
             sb.append(((ClassRef)returnType).getDefinition().getName());
         }
 
-        sb.append("(");
+        sb.append(OP);
         if (!varArgPreferred) {
-            sb.append(StringUtils.join(arguments, ","));
+            sb.append(StringUtils.join(arguments, COMA));
         } else if (!arguments.isEmpty()) {
             List<Property> args = arguments.subList(0, arguments.size() - 1);
             Property varArg = arguments.get(arguments.size() - 1);
-            sb.append(StringUtils.join(args, ","));
+            sb.append(StringUtils.join(args, COMA));
             if (!args.isEmpty()) {
-                sb.append(",");
+                sb.append(COMA);
             }
             if (varArg.getTypeRef().getDimensions() == 1) {
-                sb.append(varArg.getTypeRef().withDimensions(0)).append("... ");
+                sb.append(varArg.getTypeRef().withDimensions(0)).append(VARARG).append(SPACE);
             } else {
-                sb.append(varArg.getTypeRef().withDimensions(0)).append("... ");
+                sb.append(varArg.getTypeRef()).append(SPACE);
             }
             sb.append(varArg.getName());
         }
-        sb.append(")");
+        sb.append(CP);
 
         if (exceptions != null && !exceptions.isEmpty()) {
-            sb.append(" throws ").append(join(exceptions, ","));
+            sb.append(SPACE).append(THROWS).append(SPACE).append(join(exceptions, COMA));
         }
 
         return sb.toString();
