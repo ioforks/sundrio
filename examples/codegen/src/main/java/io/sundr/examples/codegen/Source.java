@@ -23,18 +23,18 @@ import java.util.List;
 
 public class Source {
 
-    private final List<ClassDef> types;
+    private final List<TypeDef> types;
 
     public Source() {
         this(Collections.EMPTY_LIST);
     }
 
     @Buildable
-    public Source(List<ClassDef> types) {
+    public Source(List<TypeDef> types) {
         this.types = types;
     }
 
-    public List<ClassDef> getTypes() {
+    public List<TypeDef> getTypes() {
         return types;
     }
 }

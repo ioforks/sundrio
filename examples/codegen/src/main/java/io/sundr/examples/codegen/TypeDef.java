@@ -16,62 +16,23 @@
 
 package io.sundr.examples.codegen;
 
-import io.sundr.builder.annotations.Buildable;
+import io.sundr.builder.Builder;
 
-import java.util.Map;
+import java.util.Set;
 
+/**
+ * Created by iocanel on 6/29/16.
+ */
+public interface TypeDef<T extends TypeDef<T,B>, B extends Builder<T>> {
 
-public abstract class TypeDef<T extends TypeDef<T,B>, B extends TypeDefBuilder<T,B>> extends ModifierSupport {
-
-    private final Kind kind;
-    private final String packageName;
-    private final String name;
-    private final TypeDef outerType;
-
-    @Buildable
-    public TypeDef(Kind kind, String packageName, String name, TypeDef outerType, int modifiers, Map<String, Object> attributes) {
-        super(modifiers, attributes);
-        this.kind = kind;
-        this.packageName = packageName;
-        this.name = name;
-        this.outerType = outerType;
-    }
-
-    abstract B edit();
-
-    /**
-     * Returns the fully qualified name of the type.
-     *
-     * @return
-     */
-    public String getFullyQualifiedName() {
-        StringBuilder sb = new StringBuilder();
-        if (packageName != null && !packageName.isEmpty()) {
-            sb.append(getPackageName()).append(".");
-        }
-
-        if (outerType != null) {
-            sb.append(outerType.getName()).append(".");
-        }
-        sb.append(getName());
-
-        return sb.toString();
-    }
-
-    public Kind getKind() {
-        return kind;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public TypeDef getOuterType() {
-        return outerType;
-    }
+    B edit();
+    Kind getKind();
+    String getPackageName();
+    String getName();
+    Set<ClassRef> getAnnotations();
+    Set<ClassRef> getExtendsList();
+    Set<ClassRef> getImplementsList();
+    TypeDef getOuterType();
+    Set<TypeDef> getInnerTypes();
 
 }

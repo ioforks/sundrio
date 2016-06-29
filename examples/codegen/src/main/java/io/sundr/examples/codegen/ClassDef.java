@@ -20,48 +20,30 @@ import io.sundr.builder.TypedVisitor;
 import io.sundr.builder.annotations.Buildable;
 import io.sundr.codegen.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Buildable
-public class ClassDef extends ModifierSupport implements TypeDef<ClassDef, ClassDefBuilder> {
+public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
+
     public static ClassDef OBJECT = new ClassDefBuilder()
             .withPackageName("java.lang")
             .withName("Object")
             .build();
 
-    private final Kind kind;
-    private final String packageName;
-    private final String name;
+    public static Set<ClassRef> EXTENDS_OBJECT = new LinkedHashSet<>(Arrays.asList(ClassDef.OBJECT.toInternalReference()));
 
-    private final Set<ClassRef> annotations;
-    private final Set<ClassRef> extendsList;
-    private final Set<ClassRef> implementsList;
     private final List<TypeParamDef> parameters;
 
     private final Set<Property> properties;
     private final Set<Method> constructors;
     private final Set<Method> methods;
-    private final TypeDef outerType;
-    private final Set<TypeDef> innerTypes;
 
     public ClassDef(Kind kind, String packageName, String name, Set<ClassRef> annotations, Set<ClassRef> extendsList, Set<ClassRef> implementsList, List<TypeParamDef> parameters, Set<Property> properties, Set<Method> constructors, Set<Method> methods, TypeDef outerType, Set<TypeDef> innerTypes, int modifiers, Map<String, Object> attributes) {
-        super(modifiers, attributes);
-        this.kind = kind != null ? kind : Kind.CLASS;
-        this.packageName = packageName;
-        this.name = name;
-        this.annotations = annotations;
-        this.extendsList = extendsList;
-        this.implementsList = implementsList;
+        super(kind, packageName, name, annotations, extendsList, implementsList, outerType, innerTypes, modifiers, attributes);
         this.parameters = parameters;
         this.properties = properties;
         this.constructors = adaptConstructors(constructors, this);
         this.methods = methods;
-        this.outerType = outerType;
-        this.innerTypes = setOuterType(innerTypes, this);
     }
 
     /**
@@ -83,17 +65,7 @@ public class ClassDef extends ModifierSupport implements TypeDef<ClassDef, Class
         return adapted;
     }
 
-    private static Set<TypeDef> setOuterType(Set<TypeDef> types, TypeDef outer) {
-        Set<TypeDef> updated = new LinkedHashSet<TypeDef>();
-        for (TypeDef typeDef : types) {
-            if (typeDef.getOuterType().equals(outer)) {
-                updated.add(typeDef);
-            } else {
-                updated.add(typeDef.edit().withOuterType(outer).build());
-            }
-        }
-        return updated;
-    }
+
 
     /**
      * Returns the fully qualified name of the type.
@@ -142,30 +114,6 @@ public class ClassDef extends ModifierSupport implements TypeDef<ClassDef, Class
         return false;
     }
 
-    public Kind getKind() {
-        return kind;
-    }
-
-    public Set<ClassRef> getAnnotations() {
-        return annotations;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Set<ClassRef> getExtendsList() {
-        return extendsList;
-    }
-
-    public Set<ClassRef> getImplementsList() {
-        return implementsList;
-    }
-
     public List<TypeParamDef> getParameters() {
         return parameters;
     }
@@ -180,14 +128,6 @@ public class ClassDef extends ModifierSupport implements TypeDef<ClassDef, Class
 
     public Set<Method> getMethods() {
         return methods;
-    }
-
-    public TypeDef getOuterType() {
-        return outerType;
-    }
-
-    public Set<TypeDef> getInnerTypes() {
-        return innerTypes;
     }
 
     @Override
@@ -258,7 +198,7 @@ public class ClassDef extends ModifierSupport implements TypeDef<ClassDef, Class
 
     public Set<ClassRef> getImports() {
         final Set<ClassRef> imports = new LinkedHashSet<ClassRef>();
-        new TypeDefBuilder(this).accept(new TypedVisitor<ClassRefBuilder>() {
+        new ClassDefBuilder(this).accept(new TypedVisitor<ClassRefBuilder>() {
             public void visit(ClassRefBuilder builder) {
                 imports.add(builder.build());
             }
@@ -305,5 +245,10 @@ public class ClassDef extends ModifierSupport implements TypeDef<ClassDef, Class
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public ClassDefBuilder edit() {
+        return new ClassDefBuilder(this);
     }
 }
