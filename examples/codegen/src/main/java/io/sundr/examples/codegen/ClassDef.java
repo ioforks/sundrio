@@ -29,13 +29,16 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
             .withName("Object")
             .build();
 
-    public static Set<ClassRef> EXTENDS_OBJECT = new LinkedHashSet<>(Arrays.asList(ClassDef.OBJECT.toInternalReference()));
+    public static ClassRef OBJECT_REF = OBJECT.toReference();
+
+    public static Set<ClassRef> EXTENDS_OBJECT = new LinkedHashSet<>(Arrays.asList(OBJECT_REF));
 
     private final List<TypeParamDef> parameters;
 
     private final Set<Property> properties;
     private final Set<Method> constructors;
     private final Set<Method> methods;
+
 
     public ClassDef(Kind kind, String packageName, String name, Set<ClassRef> annotations, Set<ClassRef> extendsList, Set<ClassRef> implementsList, List<TypeParamDef> parameters, Set<Property> properties, Set<Method> constructors, Set<Method> methods, TypeDef outerType, Set<TypeDef> innerTypes, int modifiers, Map<String, Object> attributes) {
         super(kind, packageName, name, annotations, extendsList, implementsList, outerType, innerTypes, modifiers, attributes);
@@ -111,6 +114,30 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
         return false;
     }
 
+    public Kind getKind() {
+        return kind;
+    }
+
+    public Set<ClassRef> getAnnotations() {
+        return annotations;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<ClassRef> getExtendsList() {
+        return extendsList;
+    }
+
+    public Set<ClassRef> getImplementsList() {
+        return implementsList;
+    }
+
     public List<TypeParamDef> getParameters() {
         return parameters;
     }
@@ -125,6 +152,30 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
 
     public Set<Method> getMethods() {
         return methods;
+    }
+
+    public TypeDef getOuterType() {
+        return outerType;
+    }
+
+    public Set<TypeDef> getInnerTypes() {
+        return innerTypes;
+    }
+
+    public boolean isClass() {
+        return kind == Kind.INTERFACE;
+    }
+
+    public boolean isInterface() {
+        return kind == Kind.INTERFACE;
+    }
+
+    public boolean isEnum() {
+        return kind == Kind.ENUM;
+    }
+
+    public boolean isAnnotation() {
+        return kind == Kind.ANNOTATION;
     }
 
     @Override
@@ -283,7 +334,7 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
         }
 
         if (extendsList != null && !extendsList.isEmpty()
-                && (extendsList.size() != 1 || !extendsList.contains(OBJECT.toReference()))) {
+                && (extendsList.size() != 1 || !extendsList.contains(OBJECT_REF))) {
             sb.append(SPACE).append(EXTENDS).append(SPACE);
             sb.append(StringUtils.join(extendsList, COMA));
         }
@@ -295,7 +346,6 @@ public class ClassDef extends AbstractTypeDef<ClassDef, ClassDefBuilder> {
 
         return sb.toString();
     }
-
     @Override
     public ClassDefBuilder edit() {
         return new ClassDefBuilder(this);

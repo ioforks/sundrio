@@ -44,10 +44,6 @@ public class TypeParamRef extends AbstractTypeRef {
         return new TypeParamRefBuilder(this).withDimensions(dimensions).build();
     }
 
-    public boolean isAssignableFrom(TypeRef ref) {
-        return false;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -67,5 +63,9 @@ public class TypeParamRef extends AbstractTypeRef {
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean isAssignableFrom(TypeRef ref) {
+        return this.equals(ref);
     }
 }

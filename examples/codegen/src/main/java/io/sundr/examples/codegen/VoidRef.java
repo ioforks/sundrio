@@ -24,8 +24,6 @@ import java.util.Map;
 @Buildable
 public class VoidRef extends AbstractTypeRef {
 
-    private static final String VOID = "void";
-
     public VoidRef() {
         this(Collections.<String, Object>emptyMap());
     }
@@ -34,24 +32,21 @@ public class VoidRef extends AbstractTypeRef {
         super(attributes);
     }
 
-    @Override
-    public boolean isAssignableFrom(TypeRef ref) {
-        return false;
-    }
-
-    @Override
     public int getDimensions() {
         return 0;
     }
 
-    @Override
     public TypeRef withDimensions(int dimensions) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public String toString() {
-        return VOID;
+        return "void";
+    }
+
+    public boolean isAssignableFrom(TypeRef ref) {
+        return false;
     }
 
 }

@@ -30,10 +30,6 @@ public class ClassRef extends AbstractTypeRef {
     public static final String UNKWNON = "<unkwnon>";
     public static final String BRACKETS = "[]";
 
-    public static final ClassRef OBJECT = new ClassRefBuilder()
-            .withDefinition(ClassDef.OBJECT)
-            .build();
-
     private final ClassDef definition;
     private final int dimensions;
     private final List<TypeRef> arguments;
