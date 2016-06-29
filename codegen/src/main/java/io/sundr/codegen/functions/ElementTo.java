@@ -61,6 +61,7 @@ import static io.sundr.codegen.utils.ModelUtils.getPackageName;
 public class ElementTo {
 
     private static final String OBJECT_BOUND = "java.lang.Object";
+    private static final String ANY_BOUND = "<any>";
     private static final String JAVA_PEFIX = "java.";
     private static final String JAVAX_PEFIX = "javax.";
     private static final String COM_SUN_PREFIX = "com.sun.";
@@ -240,7 +241,7 @@ public class ElementTo {
                 List<ClassRef> genericBounds = new ArrayList<ClassRef>();
                 if (!typeParameter.getBounds().isEmpty()) {
                     TypeMirror bound = typeParameter.getBounds().get(0);
-                    if (!OBJECT_BOUND.equals(bound.toString())) {
+                    if (!OBJECT_BOUND.equals(bound.toString()) && !ANY_BOUND.equals(bound.toString())) {
                         TypeRef boundRef = MIRROR_TO_TYPEREF.apply(bound);
                         if (boundRef instanceof ClassRef) {
                             genericBounds.add((ClassRef) boundRef);
