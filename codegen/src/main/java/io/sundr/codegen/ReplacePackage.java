@@ -18,13 +18,7 @@ package io.sundr.codegen;
 
 import io.sundr.builder.Builder;
 import io.sundr.builder.Visitor;
-import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.ClassRefBuilder;
-import io.sundr.codegen.model.MethodBuilder;
-import io.sundr.codegen.model.PropertyBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
-import io.sundr.codegen.model.TypeRef;
+import io.sundr.codegen.model.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -42,8 +36,8 @@ public class ReplacePackage implements Visitor<Builder> {
     }
 
     public void visit(Builder builder) {
-        if (builder instanceof TypeDefBuilder) {
-            visitTypeDefBuilder((TypeDefBuilder) builder);
+        if (builder instanceof ClassDefBuilder) {
+            visitClassDefBuilder((ClassDefBuilder) builder);
         } else if (builder instanceof ClassRefBuilder) {
             visitClassRefBuilder((ClassRefBuilder) builder);
         } else if (builder instanceof PropertyBuilder) {
@@ -89,7 +83,7 @@ public class ReplacePackage implements Visitor<Builder> {
         builder.withArguments(updatedArguments);
     }
 
-    private void visitTypeDefBuilder(TypeDefBuilder builder) {
+    private void visitClassDefBuilder(ClassDefBuilder builder) {
         if (target.equals(builder.getPackageName())) {
             builder.withPackageName(replacement);
         }

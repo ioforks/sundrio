@@ -21,7 +21,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import io.sundr.Function;
 import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDefBuilder;
 import io.sundr.codegen.model.TypeParamDef;
 import io.sundr.codegen.model.TypeParamDefBuilder;
 
@@ -40,7 +40,7 @@ public class ClassOrInterfaceTypeToTypeDef implements Function<ClassOrInterfaceT
                     .build();
         }
 
-        return new TypeDefBuilder()
+        return new ClassDefBuilder()
                 .withName(item.getName())
                 .withParameters(parameters)
                 .build();

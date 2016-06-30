@@ -17,7 +17,7 @@
 package io.sundr.codegen.converters;
 
 import io.sundr.codegen.functions.ElementTo;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDefBuilder;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementVisitor;
@@ -27,15 +27,15 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 
-public class TypeDefElementVisitor implements ElementVisitor<TypeDefBuilder, Void> {
+public class TypeDefElementVisitor implements ElementVisitor<ClassDefBuilder, Void> {
 
-    private final TypeDefBuilder builder = new TypeDefBuilder();
+    private final ClassDefBuilder builder = new ClassDefBuilder();
 
-    public TypeDefBuilder visit(Element e, Void aVoid) {
+    public ClassDefBuilder visit(Element e, Void aVoid) {
         return builder.withName(e.getSimpleName().toString());
     }
 
-    public TypeDefBuilder visit(Element e) {
+    public ClassDefBuilder visit(Element e) {
         String name = e.getSimpleName().toString();
         builder.withName(name);
         if (e.getEnclosingElement() instanceof PackageElement) {
@@ -45,27 +45,27 @@ public class TypeDefElementVisitor implements ElementVisitor<TypeDefBuilder, Voi
         return builder;
     }
 
-    public TypeDefBuilder visitPackage(PackageElement e, Void aVoid) {
+    public ClassDefBuilder visitPackage(PackageElement e, Void aVoid) {
         return builder.withPackageName(e.getQualifiedName().toString());
     }
 
-    public TypeDefBuilder visitType(TypeElement e, Void aVoid) {
+    public ClassDefBuilder visitType(TypeElement e, Void aVoid) {
         return builder.withName(e.getSimpleName().toString());
     }
 
-    public TypeDefBuilder visitVariable(VariableElement e, Void aVoid) {
+    public ClassDefBuilder visitVariable(VariableElement e, Void aVoid) {
         return builder.addToProperties(ElementTo.PROPERTY.apply(e));
     }
 
-    public TypeDefBuilder visitExecutable(ExecutableElement e, Void aVoid) {
+    public ClassDefBuilder visitExecutable(ExecutableElement e, Void aVoid) {
         return builder.addToMethods(ElementTo.METHOD.apply(e));
     }
 
-    public TypeDefBuilder visitTypeParameter(TypeParameterElement e, Void aVoid) {
+    public ClassDefBuilder visitTypeParameter(TypeParameterElement e, Void aVoid) {
         return builder.addToParameters(ElementTo.TYPEPARAMDEF.apply(e));
     }
 
-    public TypeDefBuilder visitUnknown(Element e, Void aVoid) {
+    public ClassDefBuilder visitUnknown(Element e, Void aVoid) {
         return builder;
     }
 }

@@ -56,8 +56,8 @@ import io.sundr.codegen.model.Property;
 import io.sundr.codegen.model.PropertyBuilder;
 import io.sundr.codegen.model.StringStatement;
 import io.sundr.codegen.model.StringStatementBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import io.sundr.codegen.model.TypeParamDef;
 import io.sundr.codegen.model.TypeParamDefBuilder;
 import io.sundr.codegen.model.TypeParamRef;
@@ -210,7 +210,7 @@ public class Sources {
                     .withArguments(arguments)
                     .build();
 
-            TypeDef knwonDefition = DefinitionRepository.getRepository().getDefinition(tmpRef);
+            ClassDef knwonDefition = DefinitionRepository.getRepository().getDefinition(tmpRef);
             if (knwonDefition != null) {
                 return new ClassRefBuilder(tmpRef).withDefinition(knwonDefition).build();
             } else if (classOrInterfaceType.getTypeArgs().isEmpty() && boundName.length() == 1)  {
@@ -299,9 +299,9 @@ public class Sources {
         }
     };
 
-    public static Function<TypeDeclaration, TypeDef> TYPEDEF = new Function<TypeDeclaration, TypeDef>() {
+    public static Function<TypeDeclaration, ClassDef> TYPEDEF = new Function<TypeDeclaration, ClassDef>() {
 
-        public TypeDef apply(TypeDeclaration type) {
+        public ClassDef apply(TypeDeclaration type) {
             if (type instanceof ClassOrInterfaceDeclaration) {
                 ClassOrInterfaceDeclaration decl = (ClassOrInterfaceDeclaration) type;
                 Kind kind = decl.isInterface() ? Kind.INTERFACE : Kind.CLASS;
@@ -427,7 +427,7 @@ public class Sources {
                     }
                 }
 
-               return DefinitionRepository.getRepository().register( new TypeDefBuilder()
+               return DefinitionRepository.getRepository().register( new ClassDefBuilder()
                         .withKind(kind)
                         .withPackageName(PACKAGENAME.apply(type))
                         .withName(decl.getName())
@@ -438,7 +438,7 @@ public class Sources {
                         .withProperties(properties)
                         .withMethods(methods)
                         .withConstructors(constructors)
-                        .addToAttributes(TypeDef.ALSO_IMPORT, IMPORTS.apply(type))
+                        .addToAttributes(ClassDef.ALSO_IMPORT, IMPORTS.apply(type))
                         .build());
             }
             throw new IllegalArgumentException("Unsupported TypeDeclaration:[" + type + "].");
@@ -498,9 +498,9 @@ public class Sources {
         }
     };
 
-    public static Function<String, TypeDef> FROM_CLASSPATH_TO_SINGLE_TYPEDEF = new Function<String, TypeDef>() {
+    public static Function<String, ClassDef> FROM_CLASSPATH_TO_SINGLE_TYPEDEF = new Function<String, ClassDef>() {
 
-        public TypeDef apply(String resource) {
+        public ClassDef apply(String resource) {
             CompilationUnit cu = Sources.FROM_CLASSPATH_TO_COMPILATIONUNIT.apply(resource);
             TypeDeclaration typeDeclaration = cu.getTypes().get(0);
             return TYPEDEF.apply(typeDeclaration);
@@ -508,9 +508,9 @@ public class Sources {
         }
     };
 
-    public static Function<InputStream, TypeDef> FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF = new Function<InputStream, TypeDef>() {
+    public static Function<InputStream, ClassDef> FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF = new Function<InputStream, ClassDef>() {
 
-        public TypeDef apply(InputStream is) {
+        public ClassDef apply(InputStream is) {
             CompilationUnit cu = Sources.FROM_INPUTSTREAM_TO_COMPILATIONUNIT.apply(is);
             TypeDeclaration typeDeclaration = cu.getTypes().get(0);
             return TYPEDEF.apply(typeDeclaration);

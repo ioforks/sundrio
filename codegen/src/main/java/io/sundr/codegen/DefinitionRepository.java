@@ -16,10 +16,8 @@
 
 package io.sundr.codegen;
 
-import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
-import io.sundr.codegen.model.TypeRef;
+import io.sundr.codegen.model.*;
+import io.sundr.codegen.model.ClassDefBuilder;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +41,7 @@ public class DefinitionRepository {
         return INSTANCE;
     }
 
-    public TypeDef register(TypeDef definition) {
+    public ClassDef register(ClassDef definition) {
         if (definition != null) {
             definitions.put(definition.getFullyQualifiedName(), definition);
         }
@@ -51,8 +49,8 @@ public class DefinitionRepository {
     }
 
 
-    public TypeDef register(TypeDef definition, String... flags) {
-        TypeDefBuilder builder = new TypeDefBuilder(definition);
+    public ClassDef register(ClassDef definition, String... flags) {
+        ClassDefBuilder builder = new ClassDefBuilder(definition);
         for (String flag : flags) {
             builder.addToAttributes(flag, true);
         }
@@ -83,9 +81,9 @@ public class DefinitionRepository {
        return definitions.get(fullyQualifiedName);
     }
 
-    public TypeDef getDefinition(TypeRef type) {
+    public ClassDef getDefinition(ClassRef type) {
         if (type instanceof ClassRef) {
-            return definitions.get(((ClassRef)type).getDefinition().getFullyQualifiedName());
+            return (ClassDef) definitions.get((type).getDefinition().getFullyQualifiedName());
         }
         return null;
     }

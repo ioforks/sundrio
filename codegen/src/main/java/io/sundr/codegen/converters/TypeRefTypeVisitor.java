@@ -16,16 +16,9 @@
 
 package io.sundr.codegen.converters;
 
-import io.sundr.codegen.DefinitionRepository;
 import io.sundr.codegen.functions.ElementTo;
-import io.sundr.codegen.model.ClassRefBuilder;
-import io.sundr.codegen.model.PrimitiveRefBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
-import io.sundr.codegen.model.TypeRef;
-import io.sundr.codegen.model.VoidRefBuilder;
+import io.sundr.codegen.model.*;
 
-import javax.lang.model.element.ElementVisitor;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ErrorType;
@@ -75,7 +68,7 @@ public class TypeRefTypeVisitor implements TypeVisitor<TypeRef, Integer> {
                 arguments.add(arg);
             }
         }
-        TypeDef typeDef = new TypeDefElementVisitor().visit(t.asElement()).build();
+        ClassDef typeDef = new TypeDefElementVisitor().visit(t.asElement()).build();
 
         return new ClassRefBuilder()
                 .withDefinition(typeDef)

@@ -27,8 +27,8 @@ import io.sundr.codegen.model.MethodBuilder;
 import io.sundr.codegen.model.PrimitiveRefBuilder;
 import io.sundr.codegen.model.Property;
 import io.sundr.codegen.model.PropertyBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import io.sundr.codegen.model.TypeParamDef;
 import io.sundr.codegen.model.TypeParamDefBuilder;
 import io.sundr.codegen.model.TypeParamRefBuilder;
@@ -96,7 +96,7 @@ public class ClassTo {
                         .withArguments(arguments)
                         .build();
             } else if (Object.class.equals(item)) {
-                return ClassRef.OBJECT;
+                return ClassDef.OBJECT_REF;
             } else if (item instanceof Class) {
                 Class c = (Class) item;
                 if (c.isPrimitive()) {
@@ -112,11 +112,11 @@ public class ClassTo {
     });
 
 
-    private static final Function<Class, TypeDef> INTERNAL_TYPEDEF = new Function<Class, TypeDef>() {
-        public TypeDef apply(Class item) {
+    private static final Function<Class, ClassDef> INTERNAL_TYPEDEF = new Function<Class, ClassDef>() {
+        public ClassDef apply(Class item) {
 
             if (Object.class.equals(item)) {
-                return TypeDef.OBJECT;
+                return ClassDef.OBJECT;
             }
             Kind kind = KIND.apply(item);
             Set<ClassRef> extendsList = new LinkedHashSet<ClassRef>();
@@ -152,7 +152,7 @@ public class ClassTo {
                         .build());
             }
 
-            return DefinitionRepository.getRepository().register(new TypeDefBuilder()
+            return DefinitionRepository.getRepository().register(new ClassDefBuilder()
                     .withKind(kind)
                     .withName(item.getSimpleName())
                     .withPackageName(item.getPackage() != null ? item.getPackage().getName() : null)
@@ -166,15 +166,15 @@ public class ClassTo {
         }
     };
 
-    private static final Function<Class, TypeDef> INTERNAL_SHALLOW_TYPEDEF = new Function<Class, TypeDef>() {
+    private static final Function<Class, ClassDef> INTERNAL_SHALLOW_TYPEDEF = new Function<Class, ClassDef>() {
 
-        public TypeDef apply(Class item) {
+        public ClassDef apply(Class item) {
             if (Object.class.equals(item)) {
-                return TypeDef.OBJECT;
+                return ClassDef.OBJECT;
             }
             Kind kind = KIND.apply(item);
 
-            return new TypeDefBuilder()
+            return new ClassDefBuilder()
                     .withKind(kind)
                     .withName(item.getSimpleName())
                     .withPackageName(item.getPackage() != null ? item.getPackage().getName() : null)
@@ -184,7 +184,7 @@ public class ClassTo {
         }
     };
 
-    public static final Function<Class, TypeDef> TYPEDEF = FunctionFactory.cache(INTERNAL_TYPEDEF).withFallback(INTERNAL_SHALLOW_TYPEDEF).withMaximumRecursionLevel(5).withMaximumNestingDepth(5);
+    public static final Function<Class, ClassDef> TYPEDEF = FunctionFactory.cache(INTERNAL_TYPEDEF).withFallback(INTERNAL_SHALLOW_TYPEDEF).withMaximumRecursionLevel(5).withMaximumNestingDepth(5);
 
     private static Function<Type, TypeParamDef> TYPEPARAMDEF = FunctionFactory.cache(new Function<Type, TypeParamDef>() {
 

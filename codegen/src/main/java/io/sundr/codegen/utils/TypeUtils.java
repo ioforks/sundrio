@@ -17,16 +17,7 @@
 package io.sundr.codegen.utils;
 
 import io.sundr.Function;
-import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.ClassRefBuilder;
-import io.sundr.codegen.model.PrimitiveRef;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
-import io.sundr.codegen.model.TypeParamDef;
-import io.sundr.codegen.model.TypeParamDefBuilder;
-import io.sundr.codegen.model.TypeParamRef;
-import io.sundr.codegen.model.TypeParamRefBuilder;
-import io.sundr.codegen.model.TypeRef;
+import io.sundr.codegen.model.*;
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
@@ -50,7 +41,7 @@ public final class TypeUtils {
     public static boolean isInstanceOf(TypeRef type, TypeDef targetType, Function<TypeRef, Boolean> function) {
         if (type instanceof ClassRef) {
             ClassRef classRef = (ClassRef) type;
-            TypeDef definition = classRef.getDefinition();
+            ClassDef definition = classRef.getDefinition();
             if (definition.getFullyQualifiedName().equals(targetType.getFullyQualifiedName())) {
                 return true;
             }
@@ -113,13 +104,13 @@ public final class TypeUtils {
      * @param typeDef
      * @return
      */
-    public static ClassRef classRefOf(TypeDef typeDef, Object... arguments) {
+    public static ClassRef classRefOf(ClassDef typeDef, Object... arguments) {
         List<TypeRef> acutalArguments = new ArrayList<TypeRef>();
         for (Object a : arguments) {
             if (a instanceof TypeRef) {
                 acutalArguments.add((TypeRef)a);
-            } else if (a instanceof TypeDef) {
-                acutalArguments.add(classRefOf((TypeDef)a));
+            } else if (a instanceof ClassDef) {
+                acutalArguments.add(classRefOf((ClassDef) a));
             }
         }
         return new ClassRefBuilder()
@@ -134,8 +125,8 @@ public final class TypeUtils {
      * @param base       The base type.
      * @return
      */
-    public static TypeDef unwrapGeneric(TypeDef base) {
-        return new TypeDefBuilder(base).withParameters().build();
+    public static ClassDef unwrapGeneric(ClassDef base) {
+        return new ClassDefBuilder(base).withParameters().build();
     }
 
     /**
@@ -145,8 +136,8 @@ public final class TypeUtils {
      * @param parameters    The parameter types.
      * @return
      */
-    public static TypeDef typeGenericOf(TypeDef base, TypeParamDef... parameters) {
-        return new TypeDefBuilder(base)
+    public static ClassDef typeGenericOf(ClassDef base, TypeParamDef... parameters) {
+        return new ClassDefBuilder(base)
                 .withParameters(parameters)
                 .build();
     }
@@ -158,8 +149,8 @@ public final class TypeUtils {
      * @param superClass The super type.
      * @return
      */
-    public static TypeDef typeExtends(TypeDef base, ClassRef superClass) {
-        return new TypeDefBuilder(base)
+    public static ClassDef typeExtends(ClassDef base, ClassRef superClass) {
+        return new ClassDefBuilder(base)
                 .withExtendsList(superClass)
                 .build();
     }
@@ -171,8 +162,8 @@ public final class TypeUtils {
      * @param superClass The super type.
      * @return
      */
-    public static TypeDef typeImplements(TypeDef base, ClassRef... superClass) {
-        return new TypeDefBuilder(base)
+    public static ClassDef typeImplements(ClassDef base, ClassRef... superClass) {
+        return new ClassDefBuilder(base)
                 .withImplementsList(superClass)
                 .build();
     }

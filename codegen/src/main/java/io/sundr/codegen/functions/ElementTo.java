@@ -21,21 +21,7 @@ import io.sundr.Function;
 import io.sundr.codegen.CodegenContext;
 import io.sundr.codegen.DefinitionRepository;
 import io.sundr.codegen.converters.TypeRefTypeVisitor;
-import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.ClassRefBuilder;
-import io.sundr.codegen.model.Kind;
-import io.sundr.codegen.model.Method;
-import io.sundr.codegen.model.MethodBuilder;
-import io.sundr.codegen.model.Property;
-import io.sundr.codegen.model.PropertyBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
-import io.sundr.codegen.model.TypeParamDef;
-import io.sundr.codegen.model.TypeParamDefBuilder;
-import io.sundr.codegen.model.TypeParamRef;
-import io.sundr.codegen.model.TypeParamRefBuilder;
-import io.sundr.codegen.model.TypeRef;
-import io.sundr.codegen.model.VoidRef;
+import io.sundr.codegen.model.*;
 import io.sundr.codegen.utils.TypeUtils;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -96,8 +82,8 @@ public class ElementTo {
                 known = TYPEDEF.apply((TypeElement) element);
             }
             TypeRef typeRef = item.accept(new TypeRefTypeVisitor(), 0);
-            if (typeRef instanceof ClassRef && known != null) {
-                return new ClassRefBuilder((ClassRef) typeRef).withDefinition(known).build();
+            if (typeRef instanceof ClassRef && known instanceof ClassDef) {
+                return new ClassRefBuilder((ClassRef) typeRef).withDefinition((ClassDef) known).build();
             }
             return typeRef;
         }
@@ -201,19 +187,19 @@ public class ElementTo {
          }
      };
 
-    public static final Function<TypeElement, TypeDef> INTERNAL_TYPEDEF = new Function<TypeElement, TypeDef>() {
-        public TypeDef apply(TypeElement classElement) {
+    public static final Function<TypeElement, ClassDef> INTERNAL_TYPEDEF = new Function<TypeElement, ClassDef>() {
+        public ClassDef apply(TypeElement classElement) {
             //Check SuperClass
             Kind kind = Kind.CLASS;
 
             TypeMirror superClass = classElement.getSuperclass();
-            TypeRef superClassType = TypeDef.OBJECT_REF;
+            TypeRef superClassType = ClassDef.OBJECT_REF;
 
             if (superClass == null) {
                 //ignore
             } else if (superClass instanceof NoType) {
                 //ignore
-            } else if (superClass.toString().equals(TypeDef.OBJECT.getFullyQualifiedName())) {
+            } else if (superClass.toString().equals(ClassDef.OBJECT.getFullyQualifiedName())) {
                 //ignore
             } else {
                 superClassType = MIRROR_TO_TYPEREF.apply(superClass);
@@ -259,7 +245,7 @@ public class ElementTo {
             }
 
 
-            TypeDef baseType = new TypeDefBuilder()
+            ClassDef baseType = new ClassDefBuilder()
                     .withKind(kind)
                     .withModifiers(TypeUtils.modifiersToInt(classElement.getModifiers()))
                     .withPackageName(getPackageName(classElement))
@@ -272,13 +258,13 @@ public class ElementTo {
 
             Set<TypeDef> innerTypes = new LinkedHashSet<TypeDef>();
             for (TypeElement innerElement : ElementFilter.typesIn(classElement.getEnclosedElements())) {
-                TypeDef innerType = TYPEDEF.apply(innerElement);
-                innerType = new TypeDefBuilder(innerType).withOuterType(baseType).build();
+                ClassDef innerType = TYPEDEF.apply(innerElement);
+                innerType = new ClassDefBuilder(innerType).withOuterType(baseType).build();
                 DefinitionRepository.getRepository().register(innerType);
                 innerTypes.add(innerType);
             }
 
-            TypeDefBuilder builder = new TypeDefBuilder(baseType)
+            ClassDefBuilder builder = new ClassDefBuilder(baseType)
                     .withInnerTypes(innerTypes);
 
             for (ExecutableElement constructor : ElementFilter.constructorsIn(classElement.getEnclosedElements())) {
@@ -327,9 +313,9 @@ public class ElementTo {
     };
 
 
-    public static final Function<TypeElement, TypeDef> SHALLOW_TYPEDEF = new Function<TypeElement, TypeDef>() {
+    public static final Function<TypeElement, ClassDef> SHALLOW_TYPEDEF = new Function<TypeElement, ClassDef>() {
 
-        public TypeDef apply(TypeElement classElement) {
+        public ClassDef apply(TypeElement classElement) {
             Set<ClassRef> extendsList = new LinkedHashSet<ClassRef>();
 
             //Check SuperClass
@@ -338,10 +324,10 @@ public class ElementTo {
                 kind = Kind.INTERFACE;
             } else if (classElement.getKind() == ElementKind.CLASS) {
                 kind = Kind.CLASS;
-                extendsList.add(TypeDef.OBJECT_REF);
+                extendsList.add(ClassDef.OBJECT_REF);
             }
 
-            return new TypeDefBuilder()
+            return new ClassDefBuilder()
                     .withKind(kind)
                     .withModifiers(TypeUtils.modifiersToInt(classElement.getModifiers()))
                     .withPackageName(getPackageName(classElement))
@@ -351,7 +337,7 @@ public class ElementTo {
         }
     };
 
-    public static final Function<TypeElement, TypeDef> TYPEDEF = FunctionFactory.cache(INTERNAL_TYPEDEF)
+    public static final Function<TypeElement, ClassDef> TYPEDEF = FunctionFactory.cache(INTERNAL_TYPEDEF)
             .withFallback(SHALLOW_TYPEDEF)
             .withFallbackPredicate(IS_JAVA_ELEMENT)
             .withMaximumRecursionLevel(10)

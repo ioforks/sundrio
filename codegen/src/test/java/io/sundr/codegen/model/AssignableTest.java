@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 public class AssignableTest {
 
-    TypeDef collection = new TypeDefBuilder()
+    ClassDef collection = new ClassDefBuilder()
             .withKind(Kind.INTERFACE)
             .withPackageName("java.utl")
             .withName("Collection")
@@ -30,7 +30,7 @@ public class AssignableTest {
 
     ClassRef collectionRef = collection.toReference();
 
-    TypeDef list = new TypeDefBuilder()
+    ClassDef list = new ClassDefBuilder()
             .withKind(Kind.INTERFACE)
             .withPackageName("java.utl")
             .withName("List")
@@ -39,7 +39,7 @@ public class AssignableTest {
 
     ClassRef listRef = list.toReference();
 
-    TypeDef arrayList = new TypeDefBuilder()
+    ClassDef arrayList = new ClassDefBuilder()
             .withKind(Kind.INTERFACE)
             .withPackageName("java.utl")
             .withName("ArrayList")
@@ -49,7 +49,7 @@ public class AssignableTest {
     ClassRef arrayListRef = arrayList.toReference();
 
     @Test
-    public void testWithTypeDef() {
+    public void testWithClassDef() {
         assertTrue(collection.isAssignableFrom(list));
         assertTrue(collection.isAssignableFrom(arrayList));
 

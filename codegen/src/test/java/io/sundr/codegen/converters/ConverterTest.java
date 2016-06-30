@@ -21,10 +21,7 @@ import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.util.Context;
 import io.sundr.codegen.CodegenContext;
 import io.sundr.codegen.functions.ElementTo;
-import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.PrimitiveRef;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeRef;
+import io.sundr.codegen.model.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,7 +55,7 @@ public class ConverterTest {
     @Test
     public void testWithArray() {
         TypeElement typeElement = elements.getTypeElement(ClassWithArray.class.getCanonicalName());
-        TypeDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
+        ClassDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
 
         assertNotNull(typeDef);
         assertEquals("ClassWithArray", typeDef.getName());
@@ -72,7 +69,7 @@ public class ConverterTest {
     @Test
     public void testWithPrimitiveArray() {
         TypeElement typeElement = elements.getTypeElement(ClassWithPrimitiveArray.class.getCanonicalName());
-        TypeDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
+        ClassDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
 
         assertNotNull(typeDef);
         assertEquals("ClassWithPrimitiveArray", typeDef.getName());
@@ -86,7 +83,7 @@ public class ConverterTest {
     @Test
     public void testWithParam() {
         TypeElement typeElement = elements.getTypeElement(ClassWithParam.class.getCanonicalName());
-        TypeDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
+        ClassDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
         assertNotNull(typeDef);
 
         assertEquals("ClassWithParam", typeDef.getName());
@@ -100,7 +97,7 @@ public class ConverterTest {
     @Test
     public void testWithSelfRefParam() {
         TypeElement typeElement = elements.getTypeElement(ClassWithSelfRefParam.class.getCanonicalName());
-        TypeDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
+        ClassDef typeDef =  ElementTo.TYPEDEF.apply(typeElement);
         assertNotNull(typeDef);
 
         assertEquals("ClassWithSelfRefParam", typeDef.getName());
