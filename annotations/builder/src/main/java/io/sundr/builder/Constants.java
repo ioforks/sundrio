@@ -18,8 +18,8 @@ package io.sundr.builder;
 
 import io.sundr.builder.annotations.Buildable;
 import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import io.sundr.codegen.model.TypeParamDef;
 import io.sundr.codegen.model.TypeParamRef;
 import io.sundr.codegen.model.TypeRef;
@@ -81,69 +81,69 @@ public class Constants {
     public static final VoidRef VOID = new VoidRef();
     public static final WildcardRef Q = new WildcardRef();
 
-    public static final TypeDef BOOLEAN = TYPEDEF.apply(Boolean.class);
+    public static final ClassDef BOOLEAN = TYPEDEF.apply(Boolean.class);
     public static final TypeRef BOOLEAN_REF = BOOLEAN.toInternalReference();
 
-    public static final TypeDef BUILDABLE_ANNOTATION = TYPEDEF.apply(Buildable.class);
+    public static final ClassDef BUILDABLE_ANNOTATION = TYPEDEF.apply(Buildable.class);
     public static final ClassRef BUILDABLE_ANNOTATION_REF = BUILDABLE_ANNOTATION.toInternalReference();
 
-    public static final TypeDef CLASS = TYPEDEF.apply(Class.class);
-    public static final TypeDef OBJECT = TypeDef.OBJECT;
-    public static final TypeDef MAP = TYPEDEF.apply(Map.class);
-    public static final TypeDef LINKED_HASH_MAP = TYPEDEF.apply(LinkedHashMap.class);
-    public static final TypeDef LIST = TYPEDEF.apply(List.class);
-    public static final TypeDef ARRAY_LIST = TYPEDEF.apply(ArrayList.class);
+    public static final ClassDef CLASS = TYPEDEF.apply(Class.class);
+    public static final ClassDef OBJECT = ClassDef.OBJECT;
+    public static final ClassDef MAP = TYPEDEF.apply(Map.class);
+    public static final ClassDef LINKED_HASH_MAP = TYPEDEF.apply(LinkedHashMap.class);
+    public static final ClassDef LIST = TYPEDEF.apply(List.class);
+    public static final ClassDef ARRAY_LIST = TYPEDEF.apply(ArrayList.class);
 
-    public static final TypeDef SET = TYPEDEF.apply(Set.class);
-    public static final TypeDef LINKED_HASH_SET = TYPEDEF.apply(LinkedHashSet.class);
+    public static final ClassDef SET = TYPEDEF.apply(Set.class);
+    public static final ClassDef LINKED_HASH_SET = TYPEDEF.apply(LinkedHashSet.class);
 
-    public static final TypeDef ARRAY = TYPEDEF.apply(Array.class);
-    public static final TypeDef TYPE = TYPEDEF.apply(Type.class);
-    public static final TypeDef TYPE_VARIABLE = TYPEDEF.apply(TypeVariable.class);
-    public static final TypeDef GENERIC_ARRAY_TYPE = TYPEDEF.apply(GenericArrayType.class);
-    public static final TypeDef PARAMETERIZED_TYPE = TYPEDEF.apply(ParameterizedType.class);
+    public static final ClassDef ARRAY = TYPEDEF.apply(Array.class);
+    public static final ClassDef TYPE = TYPEDEF.apply(Type.class);
+    public static final ClassDef TYPE_VARIABLE = TYPEDEF.apply(TypeVariable.class);
+    public static final ClassDef GENERIC_ARRAY_TYPE = TYPEDEF.apply(GenericArrayType.class);
+    public static final ClassDef PARAMETERIZED_TYPE = TYPEDEF.apply(ParameterizedType.class);
 
-    public static final TypeDef BUILDER = typeGenericOf(TYPEDEF.apply(Builder.class), T);
-    public static final TypeDef BASE_FLUENT = typeGenericOf(TYPEDEF.apply(BaseFluent.class), T);
-    public static final TypeDef EDITABLE = typeGenericOf(TYPEDEF.apply(Editable.class), T);
-    public static final TypeDef FLUENT = typeGenericOf(TYPEDEF.apply(Fluent.class), T);
-    public static final TypeDef FUNCTION = typeGenericOf(TYPEDEF.apply(Function.class), I, O);
-    public static final TypeDef INLINEABLE = typeGenericOf(TYPEDEF.apply(Inlineable.class), T);
-    public static final TypeDef NESTED = typeGenericOf(TYPEDEF.apply(Nested.class), N);
-    public static final TypeDef VISITOR = typeGenericOf(TYPEDEF.apply(Visitor.class), V);
-    public static final TypeDef TYPED_VISITOR = typeGenericOf(TYPEDEF.apply(TypedVisitor.class), V);
-    public static final TypeDef VISITABLE = TYPEDEF.apply(Visitable.class);
-    public static final TypeDef VISITABLE_BUILDER = typeGenericOf(TYPEDEF.apply(VisitableBuilder.class), T, V);
-    public static final TypeDef BOXED_VOID = TYPEDEF.apply(Void.class);
+    public static final ClassDef BUILDER = typeGenericOf(TYPEDEF.apply(Builder.class), T);
+    public static final ClassDef BASE_FLUENT = typeGenericOf(TYPEDEF.apply(BaseFluent.class), T);
+    public static final ClassDef EDITABLE = typeGenericOf(TYPEDEF.apply(Editable.class), T);
+    public static final ClassDef FLUENT = typeGenericOf(TYPEDEF.apply(Fluent.class), T);
+    public static final ClassDef FUNCTION = typeGenericOf(TYPEDEF.apply(Function.class), I, O);
+    public static final ClassDef INLINEABLE = typeGenericOf(TYPEDEF.apply(Inlineable.class), T);
+    public static final ClassDef NESTED = typeGenericOf(TYPEDEF.apply(Nested.class), N);
+    public static final ClassDef VISITOR = typeGenericOf(TYPEDEF.apply(Visitor.class), V);
+    public static final ClassDef TYPED_VISITOR = typeGenericOf(TYPEDEF.apply(TypedVisitor.class), V);
+    public static final ClassDef VISITABLE = TYPEDEF.apply(Visitable.class);
+    public static final ClassDef VISITABLE_BUILDER = typeGenericOf(TYPEDEF.apply(VisitableBuilder.class), T, V);
+    public static final ClassDef BOXED_VOID = TYPEDEF.apply(Void.class);
 
 
     //The classes below are created programmatically rather than by class to avoid bringing in more deps
-    public static final ClassRef VALIDATION = new TypeDefBuilder()
+    public static final ClassRef VALIDATION = new ClassDefBuilder()
             .withPackageName("javax.validation")
             .withName("Validation")
             .build().toInternalReference();
 
-    public static final ClassRef VALIDATOR = new TypeDefBuilder()
+    public static final ClassRef VALIDATOR = new ClassDefBuilder()
             .withPackageName("javax.validation")
             .withName("Validator")
             .build().toInternalReference();
 
-    public static final ClassRef VALIDATOR_FACTORY = new TypeDefBuilder()
+    public static final ClassRef VALIDATOR_FACTORY = new ClassDefBuilder()
             .withPackageName("javax.validation")
             .withName("ValidatorFactory")
             .build().toInternalReference();
 
-    public static final ClassRef VALIDATION_EXCEPTION = new TypeDefBuilder()
+    public static final ClassRef VALIDATION_EXCEPTION = new ClassDefBuilder()
             .withPackageName("javax.validation")
             .withName("ValidationException")
             .build().toInternalReference();
 
-    public static final ClassRef CONSTRAIN_VIOLATION = new TypeDefBuilder()
+    public static final ClassRef CONSTRAIN_VIOLATION = new ClassDefBuilder()
             .withPackageName("javax.validation")
             .withName("ConstraintViolation")
             .build().toInternalReference();
 
-    public static final ClassRef CONSTRAIN_VIOLATION_EXCEPTION = new TypeDefBuilder()
+    public static final ClassRef CONSTRAIN_VIOLATION_EXCEPTION = new ClassDefBuilder()
             .withPackageName("javax.validation")
             .withName("ConstraintViolationException")
             .build().toInternalReference();

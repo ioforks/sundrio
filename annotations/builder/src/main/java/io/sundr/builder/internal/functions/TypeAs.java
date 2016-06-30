@@ -38,10 +38,10 @@ import static io.sundr.codegen.utils.TypeUtils.classRefOf;
 
 public class TypeAs {
 
-    public static final Function<TypeDef, TypeDef> FLUENT_INTERFACE = new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> FLUENT_INTERFACE = new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             BuilderContext ctx = BuilderContextManager.getContext();
-            TypeDef fluent = SHALLOW_FLUENT.apply(item);
+            ClassDef fluent = SHALLOW_FLUENT.apply(item);
 
             List<TypeParamDef> parameters = new ArrayList<TypeParamDef>(item.getParameters());
             List<TypeRef> superClassParameters = new ArrayList<TypeRef>();
@@ -50,7 +50,7 @@ public class TypeAs {
 
             ClassRef builableSuperClassRef = findBuildableSuperClassRef(item);
 
-            TypeDef buildableSuperClass = findBuildableSuperClass(item);
+            ClassDef buildableSuperClass = findBuildableSuperClass(item);
             if (builableSuperClassRef != null) {
                 superClassParameters.addAll(builableSuperClassRef.getArguments());
             }
@@ -59,11 +59,11 @@ public class TypeAs {
             parameters.add(parameterFluent);
             superClassParameters.add(parameterFluent.toReference());
 
-            TypeDef superClass = buildableSuperClass != null
+            ClassDef superClass = buildableSuperClass != null
                     ? SHALLOW_FLUENT.apply(buildableSuperClass)
                     : ctx.getFluentInterface();
 
-            return new TypeDefBuilder(item)
+            return new ClassDefBuilder(item)
                     .withKind(Kind.INTERFACE)
                     .withModifiers(TypeUtils.modifiersToInt(Modifier.PUBLIC))
                     .withName(item.getName() + "Fluent")
@@ -76,10 +76,10 @@ public class TypeAs {
         }
     };
 
-    public static final Function<TypeDef, TypeDef> FLUENT_IMPL = new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> FLUENT_IMPL = new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             BuilderContext ctx = BuilderContextManager.getContext();
-            TypeDef fluent = SHALLOW_FLUENT.apply(item);
+            ClassDef fluent = SHALLOW_FLUENT.apply(item);
 
             List<TypeParamDef> parameters = new ArrayList<TypeParamDef>(item.getParameters());
             List<TypeRef> superClassParameters = new ArrayList<TypeRef>();
@@ -94,13 +94,13 @@ public class TypeAs {
             parameters.add(parameterFluent);
             superClassParameters.add(parameterFluent.toReference());
 
-            TypeDef buildableSuperClass = findBuildableSuperClass(item);
+            ClassDef buildableSuperClass = findBuildableSuperClass(item);
 
-            TypeDef superClass = buildableSuperClass != null
+            ClassDef superClass = buildableSuperClass != null
                     ? FLUENT_IMPL.apply(buildableSuperClass)
                     : ctx.getBaseFluentClass();
 
-            return new TypeDefBuilder(item)
+            return new ClassDefBuilder(item)
                     .withKind(Kind.CLASS)
                     .withModifiers(TypeUtils.modifiersToInt(Modifier.PUBLIC))
                     .withName(item.getName() + "FluentImpl")
@@ -115,12 +115,12 @@ public class TypeAs {
     };
 
 
-    public static final Function<TypeDef, TypeDef> SHALLOW_FLUENT = new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> SHALLOW_FLUENT = new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             List<TypeParamDef> parameters = new ArrayList<TypeParamDef>(item.getParameters());
             parameters.add(getNextGeneric(item));
 
-            return new TypeDefBuilder(item)
+            return new ClassDefBuilder(item)
                     .withKind(Kind.INTERFACE)
                     .withModifiers(TypeUtils.modifiersToInt(Modifier.PUBLIC))
                     .withName(item.getName() + "Fluent")
@@ -131,8 +131,8 @@ public class TypeAs {
     };
 
 
-    public static final Function<TypeDef, ClassRef> FLUENT_REF = new Function<TypeDef, ClassRef>() {
-        public ClassRef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassRef> FLUENT_REF = new Function<ClassDef, ClassRef>() {
+        public ClassRef apply(ClassDef item) {
             List<TypeRef> parameters = new ArrayList<TypeRef>();
             for (TypeParamDef param : item.getParameters()) {
                 parameters.add(param.toReference());
@@ -142,17 +142,17 @@ public class TypeAs {
         }
     };
 
-    public static final Function<TypeDef, TypeDef> BUILDER = new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
-            TypeDef builder = SHALLOW_BUILDER.apply(item);
-            TypeDef fluent = FLUENT_IMPL.apply(item);
+    public static final Function<ClassDef, ClassDef> BUILDER = new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
+            ClassDef builder = SHALLOW_BUILDER.apply(item);
+            ClassDef fluent = FLUENT_IMPL.apply(item);
 
             List<TypeRef> parameters = new ArrayList<TypeRef>();
             for (TypeParamDef param : item.getParameters()) {
                 parameters.add(param.toReference());
             }
             parameters.add(builder.toInternalReference());
-            return new TypeDefBuilder(item)
+            return new ClassDefBuilder(item)
                     .withKind(Kind.CLASS)
                     .withModifiers(TypeUtils.modifiersToInt(Modifier.PUBLIC))
                     .withName(item.getName() + "Builder")
@@ -165,13 +165,13 @@ public class TypeAs {
         }
     };
 
-    public static final Function<TypeDef, TypeDef> EDITABLE = new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> EDITABLE = new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             List<TypeParamDef> parameters = new ArrayList<TypeParamDef>();
             for (TypeParamDef generic : item.getParameters()) {
                 parameters.add(generic);
             }
-            return new TypeDefBuilder(item)
+            return new ClassDefBuilder(item)
                     .withKind(Kind.CLASS)
                     .withModifiers(TypeUtils.modifiersToInt(Modifier.PUBLIC))
                     .withName("Editable" + item.getName())
@@ -187,9 +187,9 @@ public class TypeAs {
         }
     };
 
-    public static final Function<TypeDef, TypeDef> SHALLOW_BUILDER = new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
-            return new TypeDefBuilder(item)
+    public static final Function<ClassDef, ClassDef> SHALLOW_BUILDER = new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
+            return new ClassDefBuilder(item)
                     .withModifiers(TypeUtils.modifiersToInt(Modifier.PUBLIC))
                     .withName(item.getName() + "Builder")
                     .withInnerTypes()

@@ -28,7 +28,7 @@ import io.sundr.codegen.model.Property;
 import io.sundr.codegen.model.PropertyBuilder;
 import io.sundr.codegen.model.Statement;
 import io.sundr.codegen.model.StringStatement;
-import io.sundr.codegen.model.TypeDef;
+import io.sundr.codegen.model.ClassDef;
 import io.sundr.codegen.model.TypeParamDef;
 import io.sundr.codegen.model.TypeRef;
 import io.sundr.codegen.utils.StringUtils;
@@ -93,7 +93,7 @@ public class ToMethod {
                 }
                 return statements;
             } else if (isBuildable(unwraped) && !isAbstract(unwraped)) {
-                TypeDef builder = BUILDER.apply(((ClassRef) unwraped).getDefinition());
+                ClassDef builder = BUILDER.apply(((ClassRef) unwraped).getDefinition());
                 String propertyName = property.getName();
                 String builderClass = builder.getName();
                 statements.add(new StringStatement("if (" + propertyName + "!=null){ this." + propertyName + "= new " + builderClass + "(" + propertyName + "); _visitables.add(this." + propertyName + ");} return (" + returnType + ") this;"));
@@ -101,7 +101,7 @@ public class ToMethod {
             } else if (!descendants.isEmpty()) {
                 for (Property descendant : descendants) {
                     TypeRef dunwraped = combine(UNWRAP_COLLECTION_OF, UNWRAP_ARRAY_OF).apply(descendant.getTypeRef());
-                    TypeDef builder = BUILDER.apply(((ClassRef) dunwraped).getDefinition());
+                    ClassDef builder = BUILDER.apply(((ClassRef) dunwraped).getDefinition());
                     String propertyName = property.getName();
                     String builderClass = builder.getName();
                     statements.add(new StringStatement("if (" + propertyName + " instanceof " + dunwraped + "){ this." + propertyName + "= new " + builderClass + "((" + dunwraped + ")" + propertyName + "); _visitables.add(this." + propertyName + ");}"));
@@ -428,14 +428,14 @@ public class ToMethod {
         public Method apply(Property property) {
             ClassRef baseType = (ClassRef) TypeAs.UNWRAP_COLLECTION_OF.apply(property.getTypeRef());
             //Let's reload the class from the repository if available....
-            TypeDef propertyTypeDef = BuilderContextManager.getContext().getDefinitionRepository().getDefinition((baseType).getDefinition().getFullyQualifiedName());
-            if (propertyTypeDef != null) {
-                baseType = propertyTypeDef.toInternalReference();
+            ClassDef propertyClassDef = BuilderContextManager.getContext().getDefinitionRepository().getDefinition(baseType);
+            if (propertyClassDef != null) {
+                baseType = propertyClassDef.toInternalReference();
             }
 
             TypeRef returnType = property.getAttributes().containsKey(GENERIC_TYPE_REF) ? (TypeRef) property.getAttributes().get(GENERIC_TYPE_REF) : T_REF;
-            TypeDef nestedType = PropertyAs.NESTED_INTERFACE_TYPE.apply(property);
-            TypeDef nestedTypeImpl = PropertyAs.NESTED_CLASS_TYPE.apply(property);
+            ClassDef nestedType = PropertyAs.NESTED_INTERFACE_TYPE.apply(property);
+            ClassDef nestedTypeImpl = PropertyAs.NESTED_CLASS_TYPE.apply(property);
 
             Set<TypeParamDef> parameters = new LinkedHashSet<TypeParamDef>(baseType.getDefinition().getParameters());
             List<TypeRef> typeArguments = new ArrayList<TypeRef>();
@@ -472,7 +472,7 @@ public class ToMethod {
             TypeRef returnType = property.getAttributes().containsKey(GENERIC_TYPE_REF) ? (TypeRef) property.getAttributes().get(GENERIC_TYPE_REF) : T_REF;
             Set<Method> result = new LinkedHashSet<Method>();
             TypeRef unwrappedType = TypeAs.combine(UNWRAP_COLLECTION_OF, UNWRAP_ARRAY_OF).apply(property.getTypeRef());
-            TypeDef baseType = BuilderContextManager.getContext().getBuildableRepository().getBuildable(unwrappedType);
+            ClassDef baseType = BuilderContextManager.getContext().getBuildableRepository().getBuildable(unwrappedType);
 
             for (Method constructor : getInlineableConstructors(property)) {
                 boolean isCollection = IS_COLLECTION.apply(property.getTypeRef());
@@ -512,14 +512,14 @@ public class ToMethod {
         public Method apply(Property property) {
             ClassRef baseType = (ClassRef) TypeAs.UNWRAP_COLLECTION_OF.apply(property.getTypeRef());
             //Let's reload the class from the repository if available....
-            TypeDef propertyTypeDef = BuilderContextManager.getContext().getDefinitionRepository().getDefinition((baseType).getDefinition().getFullyQualifiedName());
-            if (propertyTypeDef != null) {
-                baseType = propertyTypeDef.toInternalReference();
+            ClassDef propertyClassDef = BuilderContextManager.getContext().getDefinitionRepository().getDefinition(baseType);
+            if (propertyClassDef != null) {
+                baseType = propertyClassDef.toInternalReference();
             }
 
             TypeRef returnType = property.getAttributes().containsKey(GENERIC_TYPE_REF) ? (TypeRef) property.getAttributes().get(GENERIC_TYPE_REF) : T_REF;
-            TypeDef nestedType = PropertyAs.NESTED_INTERFACE_TYPE.apply(property);
-            TypeDef nestedTypeImpl = PropertyAs.NESTED_CLASS_TYPE.apply(property);
+            ClassDef nestedType = PropertyAs.NESTED_INTERFACE_TYPE.apply(property);
+            ClassDef nestedTypeImpl = PropertyAs.NESTED_CLASS_TYPE.apply(property);
 
             Set<TypeParamDef> parameters = new LinkedHashSet<TypeParamDef>(baseType.getDefinition().getParameters());
             List<TypeRef> typeArguments = new ArrayList<TypeRef>();
@@ -560,14 +560,14 @@ public class ToMethod {
         public Method apply(Property property) {
             ClassRef baseType = (ClassRef) TypeAs.UNWRAP_COLLECTION_OF.apply(property.getTypeRef());
             //Let's reload the class from the repository if available....
-            TypeDef propertyTypeDef = BuilderContextManager.getContext().getDefinitionRepository().getDefinition((baseType).getDefinition().getFullyQualifiedName());
-            if (propertyTypeDef != null) {
-                baseType = propertyTypeDef.toInternalReference();
+            ClassDef propertyClassDef = BuilderContextManager.getContext().getDefinitionRepository().getDefinition(baseType);
+            if (propertyClassDef != null) {
+                baseType = propertyClassDef.toInternalReference();
             }
 
             TypeRef returnType = property.getAttributes().containsKey(GENERIC_TYPE_REF) ? (TypeRef) property.getAttributes().get(GENERIC_TYPE_REF) : T_REF;
-            TypeDef nestedType = PropertyAs.NESTED_INTERFACE_TYPE.apply(property);
-            TypeDef nestedTypeImpl = PropertyAs.NESTED_CLASS_TYPE.apply(property);
+            ClassDef nestedType = PropertyAs.NESTED_INTERFACE_TYPE.apply(property);
+            ClassDef nestedTypeImpl = PropertyAs.NESTED_CLASS_TYPE.apply(property);
 
             Set<TypeParamDef> parameters = new LinkedHashSet<TypeParamDef>(baseType.getDefinition().getParameters());
             List<TypeRef> typeArguments = new ArrayList<TypeRef>();
@@ -613,8 +613,8 @@ public class ToMethod {
 
         private String getClassPrefix(Property property) {
             Object memberOf = property.getAttributes().get(OUTER_CLASS);
-            if (memberOf instanceof TypeDef) {
-                return ((TypeDef) memberOf).getName() + ".this.";
+            if (memberOf instanceof ClassDef) {
+                return ((ClassDef) memberOf).getName() + ".this.";
             } else return "";
         }
 

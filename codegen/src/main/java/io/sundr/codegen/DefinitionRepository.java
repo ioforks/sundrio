@@ -81,6 +81,13 @@ public class DefinitionRepository {
        return definitions.get(fullyQualifiedName);
     }
 
+    public TypeDef getDefinition(TypeRef type) {
+        if (type instanceof ClassRef) {
+            return definitions.get(((ClassRef)type).getDefinition().getFullyQualifiedName());
+        }
+        return null;
+    }
+
     public ClassDef getDefinition(ClassRef type) {
         if (type instanceof ClassRef) {
             return (ClassDef) definitions.get((type).getDefinition().getFullyQualifiedName());

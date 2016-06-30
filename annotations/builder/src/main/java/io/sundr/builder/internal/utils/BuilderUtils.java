@@ -28,15 +28,7 @@ import io.sundr.builder.internal.functions.TypeAs;
 import io.sundr.codegen.DefinitionRepository;
 import io.sundr.codegen.functions.ClassTo;
 import io.sundr.codegen.functions.ElementTo;
-import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.Method;
-import io.sundr.codegen.model.PrimitiveRef;
-import io.sundr.codegen.model.Property;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeParamDef;
-import io.sundr.codegen.model.TypeParamDefBuilder;
-import io.sundr.codegen.model.TypeParamRef;
-import io.sundr.codegen.model.TypeRef;
+import io.sundr.codegen.model.*;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
@@ -54,12 +46,16 @@ public class BuilderUtils {
     public static final String BUILDABLE = "BUILDABLE";
 
     public static boolean isAbstract(TypeRef  typeRef) {
-        DefinitionRepository repository =  BuilderContextManager.getContext().getDefinitionRepository();
-        TypeDef def = repository.getDefinition(typeRef);
-        if (def == null && typeRef instanceof ClassRef) {
-            def = ((ClassRef)typeRef).getDefinition();
+        if (typeRef instanceof ClassRef) {
+            DefinitionRepository repository =  BuilderContextManager.getContext().getDefinitionRepository();
+            ClassDef def = repository.getDefinition((ClassRef)typeRef);
+            if (def == null && typeRef instanceof ClassRef) {
+                def = ((ClassRef)typeRef).getDefinition();
+            }
+            return def != null ? def.isAbstract() : false;
+        } else {
+            return false;
         }
-        return def != null ? def.isAbstract() : false;
     }
 
     public static boolean isBuildable(TypeRef  typeRef) {
@@ -67,12 +63,12 @@ public class BuilderUtils {
         return repository.isBuildable(typeRef);
     }
 
-    public static boolean isBuildable(TypeDef  typeDef) {
+    public static boolean isBuildable(ClassDef  typeDef) {
         BuildableRepository repository =  BuilderContextManager.getContext().getBuildableRepository();
         return repository.isBuildable(typeDef);
     }
 
-    public static ClassRef findBuildableSuperClassRef(TypeDef clazz) {
+    public static ClassRef findBuildableSuperClassRef(ClassDef clazz) {
         BuildableRepository repository =  BuilderContextManager.getContext().getBuildableRepository();
 
         for (ClassRef superClass : clazz.getExtendsList()) {
@@ -83,7 +79,7 @@ public class BuilderUtils {
         return null;
     }
 
-    public static TypeDef findBuildableSuperClass(TypeDef clazz) {
+    public static ClassDef findBuildableSuperClass(ClassDef clazz) {
         BuildableRepository repository =  BuilderContextManager.getContext().getBuildableRepository();
 
         for (ClassRef superClass : clazz.getExtendsList()) {
@@ -94,7 +90,7 @@ public class BuilderUtils {
         return null;
     }
 
-    public static Method findBuildableConstructor(TypeDef clazz) {
+    public static Method findBuildableConstructor(ClassDef clazz) {
         //1st pass go for annotated method
         for (Method candidate : clazz.getConstructors()) {
             if (candidate.getAnnotations().contains(Constants.BUILDABLE_ANNOTATION_REF)) {
@@ -117,9 +113,9 @@ public class BuilderUtils {
 
     }
 
-    public static Method findGetter(TypeDef clazz, Property property) {
-        TypeDef current = clazz;
-        while (current!= null && !current.equals(TypeDef.OBJECT)) {
+    public static Method findGetter(ClassDef clazz, Property property) {
+        ClassDef current = clazz;
+        while (current!= null && !current.equals(ClassDef.OBJECT)) {
             for (Method method : current.getMethods()) {
                 if (isApplicableGetterOf(method, property)) {
                     return method;
@@ -128,13 +124,13 @@ public class BuilderUtils {
             if (!current.getExtendsList().iterator().hasNext()) {
                 break;
             }
-            String fqn = current.getExtendsList().iterator().next().getDefinition().getFullyQualifiedName();
-            current = DefinitionRepository.getRepository().getDefinition(fqn);
+            ClassRef extendsRef = current.getExtendsList().iterator().next();
+            current = DefinitionRepository.getRepository().getDefinition(extendsRef);
         }
         throw new SundrException("No getter found for property: " + property.getName() + " on class: " + clazz.getFullyQualifiedName());
     }
 
-    public static boolean hasSetter(TypeDef clazz, Property property) {
+    public static boolean hasSetter(ClassDef clazz, Property property) {
         for (Method method : clazz.getMethods()) {
             if (isApplicableSetterOf(method, property)) {
                 return true;
@@ -144,10 +140,10 @@ public class BuilderUtils {
     }
 
 
-    public static boolean hasOrInheritsSetter(TypeDef clazz, Property property) {
-        TypeDef current = clazz;
+    public static boolean hasOrInheritsSetter(ClassDef clazz, Property property) {
+        ClassDef current = clazz;
         //Iterate parent objects and check for properties with setters but not ctor arguments.
-        while (current!= null && !current.equals(TypeDef.OBJECT)) {
+        while (current!= null && !current.equals(ClassDef.OBJECT)) {
             for (Method method : current.getMethods()) {
                 if (isApplicableSetterOf(method, property)) {
                     return true;
@@ -155,8 +151,8 @@ public class BuilderUtils {
             }
 
             if (!current.getExtendsList().isEmpty()) {
-                String fqn = current.getExtendsList().iterator().next().getDefinition().getFullyQualifiedName();
-                current = DefinitionRepository.getRepository().getDefinition(fqn);
+                ClassRef extendsRef = current.getExtendsList().iterator().next();
+                current = DefinitionRepository.getRepository().getDefinition(extendsRef);
             } else {
                 current = null;
             }
@@ -207,7 +203,7 @@ public class BuilderUtils {
         return false;
     }
 
-    public static boolean hasBuildableConstructorWithArgument(TypeDef clazz, Property property) {
+    public static boolean hasBuildableConstructorWithArgument(ClassDef clazz, Property property) {
         Method constructor = findBuildableConstructor(clazz);
         if (constructor == null) {
             return false;
@@ -223,7 +219,7 @@ public class BuilderUtils {
      * @param item The clazz to check.
      * @return
      */
-    public static boolean hasDefaultConstructor(TypeDef item) {
+    public static boolean hasDefaultConstructor(ClassDef item) {
         if (item == null) {
             return false;
         } else if (item.getConstructors().isEmpty()) {
@@ -253,8 +249,8 @@ public class BuilderUtils {
 
         //We try both types to make sure...
         TypeDef fromRepo = BuilderContextManager.getContext().getDefinitionRepository().getDefinition(unwrapped);
-        if (fromRepo != null) {
-            for (Method candidate : fromRepo.getConstructors()) {
+        if (fromRepo instanceof ClassDef) {
+            for (Method candidate : ((ClassDef)fromRepo).getConstructors()) {
                 if (isInlineable(candidate)) {
                     result.add(candidate);
                 }
@@ -280,7 +276,7 @@ public class BuilderUtils {
         return true;
     }
 
-    public static TypeDef getInlineType(BuilderContext context, Inline inline) {
+    public static ClassDef getInlineType(BuilderContext context, Inline inline) {
         try {
             return ClassTo.TYPEDEF.apply(inline.type());
         } catch (MirroredTypeException e) {
@@ -289,7 +285,7 @@ public class BuilderUtils {
         }
     }
 
-    public static TypeDef getInlineReturnType(BuilderContext context, Inline inline, TypeDef fallback) {
+    public static ClassDef getInlineReturnType(BuilderContext context, Inline inline, ClassDef fallback) {
         try {
             Class returnType = inline.returnType();
             if (returnType == null) {
@@ -374,12 +370,12 @@ public class BuilderUtils {
         }
     }
 
-    public static TypeParamDef getNextGeneric(TypeDef type, TypeParamDef... excluded) {
+    public static TypeParamDef getNextGeneric(ClassDef type, TypeParamDef... excluded) {
         return getNextGeneric(type, Arrays.asList(excluded));
     }
 
 
-    public static TypeParamDef getNextGeneric(TypeDef type, Collection<TypeParamDef> excluded) {
+    public static TypeParamDef getNextGeneric(ClassDef type, Collection<TypeParamDef> excluded) {
         Set<String> skip = new HashSet<String>();
         for (String s : allGenericsOf(type)) {
             skip.add(s);
@@ -401,7 +397,7 @@ public class BuilderUtils {
         throw new IllegalStateException("Could not allocate generic parameter letter for: " + type.getFullyQualifiedName());
     }
 
-    public static Set<String> allGenericsOf(TypeDef clazz) {
+    public static Set<String> allGenericsOf(ClassDef clazz) {
         Set<String> result = new HashSet<String>();
 
         for (TypeParamDef paramDef : clazz.getParameters()) {

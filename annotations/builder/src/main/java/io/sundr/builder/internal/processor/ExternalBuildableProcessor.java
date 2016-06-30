@@ -24,8 +24,8 @@ import io.sundr.builder.internal.BuilderContextManager;
 import io.sundr.builder.internal.functions.ClazzAs;
 import io.sundr.builder.internal.utils.BuilderUtils;
 import io.sundr.codegen.functions.ElementTo;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import io.sundr.codegen.utils.ModelUtils;
 
 import javax.annotation.processing.Filer;
@@ -56,12 +56,12 @@ public class ExternalBuildableProcessor extends AbstractBuilderProcessor {
                 BuilderContext ctx = BuilderContextManager.create(elements, types, generated.generateBuilderPackage(), generated.builderPackage());
                 for (String name : generated.value()) {
                     TypeElement typeElement = elements.getTypeElement(name);
-                    TypeDef b = ctx.getBuildableRepository().register(ElementTo.TYPEDEF.apply(typeElement));
+                    ClassDef b = ctx.getBuildableRepository().register(ElementTo.TYPEDEF.apply(typeElement));
                     ctx.getDefinitionRepository().register(b);
                     ctx.getBuildableRepository().register(b);
                 }
                 for (TypeElement ref : BuilderUtils.getBuildableReferences(ctx, generated)) {
-                    TypeDef b = ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(ref));
+                    ClassDef b = ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(ref));
                     ctx.getDefinitionRepository().register(b);
                     ctx.getBuildableRepository().register(b);
                 }
@@ -80,7 +80,7 @@ public class ExternalBuildableProcessor extends AbstractBuilderProcessor {
                         continue;
                     }
                     BuilderContext ctx = BuilderContextManager.getContext();
-                    TypeDef typeDef = new TypeDefBuilder(ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(element))).addToAttributes(VALIDATION_ENABLED, generated.validationEnabled()).build();
+                    ClassDef typeDef = new ClassDefBuilder(ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(element))).addToAttributes(VALIDATION_ENABLED, generated.validationEnabled()).build();
                     generateLocalDependenciesIfNeeded();
                     try {
                         generateFromClazz(ClazzAs.FLUENT_INTERFACE.apply(typeDef),

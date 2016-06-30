@@ -24,8 +24,8 @@ import io.sundr.builder.internal.BuilderContextManager;
 import io.sundr.builder.internal.functions.ClazzAs;
 import io.sundr.builder.internal.utils.BuilderUtils;
 import io.sundr.codegen.functions.ElementTo;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import io.sundr.codegen.utils.ModelUtils;
 
 import javax.annotation.processing.Filer;
@@ -56,7 +56,7 @@ public class BuildableProcessor extends AbstractBuilderProcessor {
                 BuilderContext ctx = BuilderContextManager.create(elements, types, buildable.generateBuilderPackage(), buildable.builderPackage());
                 ctx.getBuildableRepository().register(ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(element)));
                 for (TypeElement ref : BuilderUtils.getBuildableReferences(ctx, buildable)) {
-                    TypeDef b = ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(ref));
+                    ClassDef b = ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(ref));
                     ctx.getDefinitionRepository().register(b);
                     ctx.getBuildableRepository().register(b);
                 }
@@ -68,7 +68,7 @@ public class BuildableProcessor extends AbstractBuilderProcessor {
                 boolean isAbstract = element.getModifiers().contains(Modifier.ABSTRACT);
                 Buildable buildable = element.getAnnotation(Buildable.class);
                 BuilderContext ctx = BuilderContextManager.create(elements, types, buildable.generateBuilderPackage(), buildable.builderPackage());
-                TypeDef typeDef = new TypeDefBuilder(ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(element))).addToAttributes(VALIDATION_ENABLED, buildable.validationEnabled()).build();
+                ClassDef typeDef = new ClassDefBuilder(ElementTo.TYPEDEF.apply(ModelUtils.getClassElement(element))).addToAttributes(VALIDATION_ENABLED, buildable.validationEnabled()).build();
                 generateLocalDependenciesIfNeeded();
 
                 try {

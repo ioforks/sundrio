@@ -18,7 +18,7 @@ package io.sundr.builder.internal;
 
 import io.sundr.codegen.model.ClassRef;
 import io.sundr.codegen.model.ParameterReference;
-import io.sundr.codegen.model.TypeDef;
+import io.sundr.codegen.model.ClassDef;
 import io.sundr.codegen.model.TypeRef;
 
 import java.util.Collections;
@@ -29,27 +29,27 @@ import java.util.Set;
 
 public class BuildableRepository {
 
-    private final Map<String, TypeDef> buildables = new HashMap<String, TypeDef>();
+    private final Map<String, ClassDef> buildables = new HashMap<String, ClassDef>();
 
-    public TypeDef register(TypeDef buildable) {
+    public ClassDef register(ClassDef buildable) {
         if (buildable != null) {
             buildables.put(buildable.getFullyQualifiedName(), buildable);
         }
         return buildable;
     }
 
-    public Set<TypeDef> getBuildables() {
-        return Collections.unmodifiableSet(new LinkedHashSet<TypeDef>(buildables.values()));
+    public Set<ClassDef> getBuildables() {
+        return Collections.unmodifiableSet(new LinkedHashSet<ClassDef>(buildables.values()));
     }
 
-    public TypeDef getBuildable(TypeRef type) {
+    public ClassDef getBuildable(TypeRef type) {
         if (type instanceof ClassRef) {
             return buildables.get(((ClassRef)type).getDefinition().getFullyQualifiedName());
         }
         return null;
     }
 
-    public boolean isBuildable(TypeDef type) {
+    public boolean isBuildable(ClassDef type) {
         return type != null && buildables.containsKey(type.getFullyQualifiedName());
     }
 

@@ -24,18 +24,7 @@ import io.sundr.builder.internal.BuilderContextManager;
 import io.sundr.builder.internal.utils.BuilderUtils;
 import io.sundr.codegen.CodegenContext;
 import io.sundr.codegen.functions.ClassTo;
-import io.sundr.codegen.model.ClassRef;
-import io.sundr.codegen.model.Method;
-import io.sundr.codegen.model.MethodBuilder;
-import io.sundr.codegen.model.Property;
-import io.sundr.codegen.model.PropertyBuilder;
-import io.sundr.codegen.model.Statement;
-import io.sundr.codegen.model.StringStatement;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
-import io.sundr.codegen.model.TypeParamDef;
-import io.sundr.codegen.model.TypeParamRef;
-import io.sundr.codegen.model.TypeRef;
+import io.sundr.codegen.model.*;
 import io.sundr.codegen.utils.StringUtils;
 import io.sundr.codegen.utils.TypeUtils;
 
@@ -54,12 +43,12 @@ import static io.sundr.codegen.model.Attributeable.ALSO_IMPORT;
 
 public class ClazzAs {
 
-    public static final Function<TypeDef, TypeDef> FLUENT_INTERFACE = FunctionFactory.wrap(new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> FLUENT_INTERFACE = FunctionFactory.wrap(new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             Set<Method> methods = new LinkedHashSet<Method>();
             Set<TypeDef> nestedClazzes = new LinkedHashSet<TypeDef>();
-            TypeDef fluentType = TypeAs.FLUENT_INTERFACE.apply(item);
-            TypeDef fluentImplType = TypeAs.FLUENT_IMPL.apply(item);
+            ClassDef fluentType = TypeAs.FLUENT_INTERFACE.apply(item);
+            ClassDef fluentImplType = TypeAs.FLUENT_IMPL.apply(item);
 
             //The generic letter is always the last
             final TypeParamDef genericType = fluentType.getParameters().get(fluentType.getParameters().size() - 1);
@@ -142,7 +131,7 @@ public class ClazzAs {
                 }
             }
 
-            return new TypeDefBuilder(fluentType)
+            return new ClassDefBuilder(fluentType)
                     .withInnerTypes(nestedClazzes)
                     .withMethods(methods)
                     .build();
@@ -150,14 +139,14 @@ public class ClazzAs {
         }
     });
 
-    public static final Function<TypeDef, TypeDef> FLUENT_IMPL = FunctionFactory.wrap(new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> FLUENT_IMPL = FunctionFactory.wrap(new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             Set<Method> constructors = new LinkedHashSet<Method>();
             Set<Method> methods = new LinkedHashSet<Method>();
             Set<TypeDef> nestedClazzes = new LinkedHashSet<TypeDef>();
             final Set<Property> properties = new LinkedHashSet<Property>();
-            TypeDef fluentType = TypeAs.FLUENT_INTERFACE.apply(item);
-            final TypeDef fluentImplType = TypeAs.FLUENT_IMPL.apply(item);
+            ClassDef fluentType = TypeAs.FLUENT_INTERFACE.apply(item);
+            final ClassDef fluentImplType = TypeAs.FLUENT_IMPL.apply(item);
 
             //The generic letter is always the last
             final TypeParamDef genericType = fluentImplType.getParameters().get(fluentImplType.getParameters().size() - 1);
@@ -293,7 +282,7 @@ public class ClazzAs {
 
             methods.add(equals);
 
-            return new TypeDefBuilder(fluentImplType)
+            return new ClassDefBuilder(fluentImplType)
                     .withConstructors(constructors)
                     .withProperties(properties)
                     .withInnerTypes(nestedClazzes)
@@ -303,13 +292,13 @@ public class ClazzAs {
     });
 
 
-    public static final Function<TypeDef, TypeDef> BUILDER = FunctionFactory.wrap(new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> BUILDER = FunctionFactory.wrap(new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             final Modifier[] modifiers = item.isAbstract()
                     ? new Modifier[]{Modifier.PUBLIC, Modifier.ABSTRACT}
                     : new Modifier[]{Modifier.PUBLIC};
 
-            TypeDef builderType = TypeAs.BUILDER.apply(item);
+            ClassDef builderType = TypeAs.BUILDER.apply(item);
             ClassRef instanceRef = item.toInternalReference();
 
             ClassRef fluent = TypeAs.FLUENT_REF.apply(item);
@@ -481,7 +470,7 @@ public class ClazzAs {
 
             methods.add(equals);
 
-            return new TypeDefBuilder(builderType)
+            return new ClassDefBuilder(builderType)
                     .withModifiers(TypeUtils.modifiersToInt(modifiers))
                     .withProperties(fields)
                     .withConstructors(constructors)
@@ -491,14 +480,14 @@ public class ClazzAs {
 
     });
 
-    public static final Function<TypeDef, TypeDef> EDITABLE_BUILDER = FunctionFactory.wrap(new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(final TypeDef item) {
+    public static final Function<ClassDef, ClassDef> EDITABLE_BUILDER = FunctionFactory.wrap(new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(final ClassDef item) {
             final Modifier[] modifiers = item.isAbstract()
                     ? new Modifier[]{Modifier.PUBLIC, Modifier.ABSTRACT}
                     : new Modifier[]{Modifier.PUBLIC};
 
-            final TypeDef editable = EDITABLE.apply(item);
-            return new TypeDefBuilder(BUILDER.apply(item)).accept(new TypedVisitor<MethodBuilder>() {
+            final ClassDef editable = EDITABLE.apply(item);
+            return new ClassDefBuilder(BUILDER.apply(item)).accept(new TypedVisitor<MethodBuilder>() {
                 public void visit(MethodBuilder builder) {
                     if (builder.getName() != null && builder.getName().equals("build")) {
                         builder.withModifiers(TypeUtils.modifiersToInt(modifiers));
@@ -512,14 +501,14 @@ public class ClazzAs {
         }
     });
 
-    public static final Function<TypeDef, TypeDef> EDITABLE = FunctionFactory.wrap(new Function<TypeDef, TypeDef>() {
-        public TypeDef apply(TypeDef item) {
+    public static final Function<ClassDef, ClassDef> EDITABLE = FunctionFactory.wrap(new Function<ClassDef, ClassDef>() {
+        public ClassDef apply(ClassDef item) {
             Modifier[] modifiers = item.isAbstract()
                     ? new Modifier[]{Modifier.PUBLIC, Modifier.ABSTRACT}
                     : new Modifier[]{Modifier.PUBLIC};
 
-            TypeDef editableType = TypeAs.EDITABLE.apply(item);
-            TypeDef builderType = TypeAs.BUILDER.apply(item);
+            ClassDef editableType = TypeAs.EDITABLE.apply(item);
+            ClassDef builderType = TypeAs.BUILDER.apply(item);
 
             Set<Method> constructors = new LinkedHashSet<Method>();
             Set<Method> methods = new LinkedHashSet<Method>();
@@ -541,7 +530,7 @@ public class ClazzAs {
 
             //We need to treat the editable classes as buildables themselves.
             return CodegenContext.getContext().getDefinitionRepository().register(
-                    BuilderContextManager.getContext().getBuildableRepository().register(new TypeDefBuilder(editableType)
+                    BuilderContextManager.getContext().getBuildableRepository().register(new ClassDefBuilder(editableType)
                             .withModifiers(TypeUtils.modifiersToInt(modifiers))
                             .withConstructors(constructors)
                             .withMethods(methods)
@@ -558,7 +547,7 @@ public class ClazzAs {
                 .build();
     }
 
-    private static List<Statement> toInstanceConstructorBody(TypeDef clazz, String fluent) {
+    private static List<Statement> toInstanceConstructorBody(ClassDef clazz, String fluent) {
         Method constructor = findBuildableConstructor(clazz);
         List<Statement> statements = new ArrayList<Statement>();
         String ref = fluent;
@@ -580,7 +569,7 @@ public class ClazzAs {
             }
         }
 
-        TypeDef target = clazz;
+        ClassDef target = clazz;
         //Iterate parent objects and check for properties with setters but not ctor arguments.
         while (target != null && !OBJECT.equals(target) && BuilderUtils.isBuildable(target)) {
             for (Property property : target.getProperties()) {
@@ -600,7 +589,7 @@ public class ClazzAs {
         return statements;
     }
 
-    private static List<Statement> toBuild(final TypeDef clazz, final TypeDef instanceType) {
+    private static List<Statement> toBuild(final ClassDef clazz, final ClassDef instanceType) {
         Method constructor = findBuildableConstructor(clazz);
         List<Statement> statements = new ArrayList<Statement>();
 
@@ -617,7 +606,7 @@ public class ClazzAs {
                 .toString()));
 
 
-        TypeDef target = clazz;
+        ClassDef target = clazz;
 
         //Iterate parent objects and check for properties with setters but not ctor arguments.
         while (target != null && !OBJECT.equals(target) && BuilderUtils.isBuildable(target)) {
@@ -640,11 +629,11 @@ public class ClazzAs {
     }
 
 
-    private static List<Statement> toEquals(TypeDef type, Collection<Property> properties) {
+    private static List<Statement> toEquals(ClassDef type, Collection<Property> properties) {
         List<Statement> statements = new ArrayList<Statement>();
 
         String simpleName = type.getName();
-        ClassRef superClass = type.getExtendsList().isEmpty() ? TypeDef.OBJECT_REF : type.getExtendsList().iterator().next();
+        ClassRef superClass = type.getExtendsList().isEmpty() ? ClassDef.OBJECT_REF : type.getExtendsList().iterator().next();
         statements.add(new StringStatement("if (this == o) return true;"));
         statements.add(new StringStatement("if (o == null || getClass() != o.getClass()) return false;"));
 
@@ -675,7 +664,7 @@ public class ClazzAs {
     }
 
 
-    private static List<Statement> toValidate(TypeDef type, boolean enabled) {
+    private static List<Statement> toValidate(ClassDef type, boolean enabled) {
         List<Statement> statements = new ArrayList<Statement>();
         if (enabled) {
             statements.add(new StringStatement("if (!validationEnabled) { return; }"));
@@ -693,7 +682,7 @@ public class ClazzAs {
     }
 
 
-    private static Method superConstructorOf(Method constructor, TypeDef constructorType) {
+    private static Method superConstructorOf(Method constructor, ClassDef constructorType) {
         return new MethodBuilder(constructor)
                 .withReturnType(constructorType.toReference())
                 .withNewBlock()

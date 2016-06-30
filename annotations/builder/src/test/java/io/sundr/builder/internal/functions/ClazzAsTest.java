@@ -24,8 +24,8 @@ import io.sundr.builder.internal.BuilderContext;
 import io.sundr.builder.internal.BuilderContextManager;
 import io.sundr.codegen.model.Method;
 import io.sundr.codegen.model.MethodBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import org.junit.Test;
 
 import javax.lang.model.util.Elements;
@@ -41,7 +41,7 @@ public class ClazzAsTest {
     public void testToFluent() {
         BuilderContext builderContext = BuilderContextManager.create(elements, types);
 
-        TypeDef type = new TypeDefBuilder()
+        ClassDef type = new ClassDefBuilder()
                 .withName("MyClass")
                 .withPackageName(getClass().getPackage().getName())
                 .withParameters()
@@ -52,11 +52,11 @@ public class ClazzAsTest {
                 .withAnnotations(Constants.BUILDABLE_ANNOTATION.toReference())
                 .build();
 
-        type = new TypeDefBuilder(type)
+        type = new ClassDefBuilder(type)
                 .withConstructors(constructor)
                 .build();
 
-        TypeDef result = ClazzAs.FLUENT_IMPL.apply(type);
+        ClassDef result = ClazzAs.FLUENT_IMPL.apply(type);
         System.out.println(result);
     }
 }

@@ -21,7 +21,7 @@ import io.sundr.codegen.functions.ClassTo;
 import io.sundr.codegen.functions.Sources;
 import io.sundr.codegen.model.ClassRef;
 import io.sundr.codegen.model.Kind;
-import io.sundr.codegen.model.TypeDef;
+import io.sundr.codegen.model.ClassDef;
 import io.sundr.codegen.model.TypeRef;
 import org.junit.Test;
 
@@ -33,11 +33,11 @@ import static org.junit.Assert.assertTrue;
 public class SimpleClassTest extends AbstractProcessorTest {
 
 
-    TypeDef simpleClassDef = Sources.FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF.apply(getClass().getClassLoader().getResourceAsStream("SimpleClass.java"));
+    ClassDef simpleClassDef = Sources.FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF.apply(getClass().getClassLoader().getResourceAsStream("SimpleClass.java"));
 
     @Test
     public void testFluent() {
-        TypeDef fluent = ClazzAs.FLUENT_INTERFACE.apply(simpleClassDef);
+        ClassDef fluent = ClazzAs.FLUENT_INTERFACE.apply(simpleClassDef);
         System.out.println(fluent);
 
         assertEquals(Kind.INTERFACE, fluent.getKind());
@@ -53,7 +53,7 @@ public class SimpleClassTest extends AbstractProcessorTest {
 
     @Test
     public void testFluentImpl() {
-        TypeDef fluentImpl = ClazzAs.FLUENT_IMPL.apply(simpleClassDef);
+        ClassDef fluentImpl = ClazzAs.FLUENT_IMPL.apply(simpleClassDef);
         System.out.println(fluentImpl);
 
         assertEquals(Kind.CLASS, fluentImpl.getKind());
@@ -71,7 +71,7 @@ public class SimpleClassTest extends AbstractProcessorTest {
 
     @Test
     public void testBuilder() {
-        TypeDef builder = ClazzAs.BUILDER.apply(simpleClassDef);
+        ClassDef builder = ClazzAs.BUILDER.apply(simpleClassDef);
         System.out.println(builder);
 
         assertEquals(Kind.CLASS, builder.getKind());
@@ -89,7 +89,7 @@ public class SimpleClassTest extends AbstractProcessorTest {
 
     @Test
     public void testEditable() {
-        TypeDef editable = ClazzAs.EDITABLE.apply(simpleClassDef);
+        ClassDef editable = ClazzAs.EDITABLE.apply(simpleClassDef);
         System.out.println(editable);
 
         assertEquals(Kind.CLASS, editable.getKind());
@@ -103,7 +103,7 @@ public class SimpleClassTest extends AbstractProcessorTest {
 
     @Test
     public void testInline() {
-        TypeDef inlineable = BuildableProcessor.inlineableOf(builderContext, simpleClassDef, inline);
+        ClassDef inlineable = BuildableProcessor.inlineableOf(builderContext, simpleClassDef, inline);
         System.out.println(inlineable);
         assertEquals(Kind.CLASS, inlineable.getKind());
         assertEquals("CallableSimpleClass", inlineable.getName());

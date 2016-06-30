@@ -20,7 +20,7 @@ import io.sundr.builder.internal.functions.ClazzAs;
 import io.sundr.codegen.functions.Sources;
 import io.sundr.codegen.model.ClassRef;
 import io.sundr.codegen.model.Kind;
-import io.sundr.codegen.model.TypeDef;
+import io.sundr.codegen.model.ClassDef;
 import io.sundr.codegen.model.TypeRef;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +32,8 @@ import static org.junit.Assert.assertEquals;
 
 public class SimpleClassWithInheritanceTest extends AbstractProcessorTest {
 
-    TypeDef simpleClassDef = Sources.FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF.apply(getClass().getClassLoader().getResourceAsStream("SimpleClass.java"));
-    TypeDef simpleClassWithDateDef = Sources.FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF.apply(getClass().getClassLoader().getResourceAsStream("SimpleClassWithDate.java"));
+    ClassDef simpleClassDef = Sources.FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF.apply(getClass().getClassLoader().getResourceAsStream("SimpleClass.java"));
+    ClassDef simpleClassWithDateDef = Sources.FROM_INPUTSTEAM_TO_SINGLE_TYPEDEF.apply(getClass().getClassLoader().getResourceAsStream("SimpleClassWithDate.java"));
 
     @Before
     public void setUp() {
@@ -42,7 +42,7 @@ public class SimpleClassWithInheritanceTest extends AbstractProcessorTest {
 
     @Test
     public void testFluent() {
-        TypeDef fluent = ClazzAs.FLUENT_INTERFACE.apply(simpleClassWithDateDef);
+        ClassDef fluent = ClazzAs.FLUENT_INTERFACE.apply(simpleClassWithDateDef);
         System.out.println(fluent);
 
         assertEquals(Kind.INTERFACE, fluent.getKind());
@@ -58,7 +58,7 @@ public class SimpleClassWithInheritanceTest extends AbstractProcessorTest {
 
     @Test
     public void testFluentImpl() throws FileNotFoundException {
-        TypeDef fluentImpl = ClazzAs.FLUENT_IMPL.apply(simpleClassWithDateDef);
+        ClassDef fluentImpl = ClazzAs.FLUENT_IMPL.apply(simpleClassWithDateDef);
         System.out.println(fluentImpl);
 
         assertEquals(Kind.CLASS, fluentImpl.getKind());
@@ -74,7 +74,7 @@ public class SimpleClassWithInheritanceTest extends AbstractProcessorTest {
 
     @Test
     public void testBuilder() throws FileNotFoundException {
-        TypeDef builder = ClazzAs.BUILDER.apply(simpleClassWithDateDef);
+        ClassDef builder = ClazzAs.BUILDER.apply(simpleClassWithDateDef);
         System.out.println(builder);
 
         assertEquals(Kind.CLASS, builder.getKind());
@@ -91,7 +91,7 @@ public class SimpleClassWithInheritanceTest extends AbstractProcessorTest {
 
     @Test
     public void testEditable() {
-        TypeDef editable = ClazzAs.EDITABLE.apply(simpleClassWithDateDef);
+        ClassDef editable = ClazzAs.EDITABLE.apply(simpleClassWithDateDef);
         System.out.println(editable);
 
         assertEquals(Kind.CLASS, editable.getKind());
@@ -105,7 +105,7 @@ public class SimpleClassWithInheritanceTest extends AbstractProcessorTest {
 
     @Test
     public void testInline() {
-        TypeDef inlineable = BuildableProcessor.inlineableOf(builderContext, simpleClassWithDateDef, inline);
+        ClassDef inlineable = BuildableProcessor.inlineableOf(builderContext, simpleClassWithDateDef, inline);
         System.out.println(inlineable);
         assertEquals(Kind.CLASS, inlineable.getKind());
         assertEquals("CallableSimpleClassWithDate", inlineable.getName());

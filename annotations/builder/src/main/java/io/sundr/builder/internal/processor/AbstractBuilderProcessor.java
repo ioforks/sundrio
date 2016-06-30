@@ -29,8 +29,8 @@ import io.sundr.codegen.model.Method;
 import io.sundr.codegen.model.MethodBuilder;
 import io.sundr.codegen.model.Property;
 import io.sundr.codegen.model.PropertyBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import io.sundr.codegen.model.TypeRef;
 import io.sundr.codegen.processor.JavaGeneratingProcessor;
 import io.sundr.codegen.utils.TypeUtils;
@@ -93,19 +93,19 @@ public abstract class AbstractBuilderProcessor extends JavaGeneratingProcessor {
     }
 
 
-    static TypeDef inlineableOf(BuilderContext ctx, TypeDef type, Inline inline) {
+    static ClassDef inlineableOf(BuilderContext ctx, ClassDef type, Inline inline) {
         final String inlineableName = !inline.name().isEmpty()
                 ? inline.name()
                 : inline.prefix() + type.getName() + inline.suffix();
 
         Set<Method> constructors = new LinkedHashSet<Method>();
-        final TypeDef builderType = TypeAs.BUILDER.apply(type);
-        TypeDef inlineType = BuilderUtils.getInlineType(ctx, inline);
-        TypeDef returnType = BuilderUtils.getInlineReturnType(ctx, inline, type);
+        final ClassDef builderType = TypeAs.BUILDER.apply(type);
+        ClassDef inlineType = BuilderUtils.getInlineType(ctx, inline);
+        ClassDef returnType = BuilderUtils.getInlineReturnType(ctx, inline, type);
         final ClassRef inlineTypeRef = inlineType.toReference(returnType.toReference());
 
         //Use the builder as the base of the inlineable. Just add interface and change name.
-        final TypeDef shallowInlineType = new TypeDefBuilder(builderType)
+        final ClassDef shallowInlineType = new ClassDefBuilder(builderType)
                 .withName(inlineableName)
                 .withImplementsList(inlineTypeRef)
                 .withProperties()
@@ -196,7 +196,7 @@ public abstract class AbstractBuilderProcessor extends JavaGeneratingProcessor {
                     .build());
         }
 
-        return new TypeDefBuilder(shallowInlineType)
+        return new ClassDefBuilder(shallowInlineType)
                 .withModifiers(TypeUtils.modifiersToInt(Modifier.PUBLIC))
                 .withConstructors(constructors)
                 .addToProperties(builderProperty, functionProperty)

@@ -18,8 +18,8 @@ package io.sundr.builder.internal.processor.generator;
 
 import io.sundr.builder.Constants;
 import io.sundr.codegen.generator.CodeGeneratorBuilder;
-import io.sundr.codegen.model.TypeDef;
-import io.sundr.codegen.model.TypeDefBuilder;
+import io.sundr.codegen.model.ClassDef;
+import io.sundr.codegen.model.ClassDefBuilder;
 import org.junit.Test;
 
 import java.io.File;
@@ -30,13 +30,13 @@ import static io.sundr.codegen.functions.ClassTo.TYPEDEF;
 
 public class BuilderGeneratorTest {
 
-    private static final TypeDef INTEGER = TYPEDEF.apply(Integer.class);
+    private static final ClassDef INTEGER = TYPEDEF.apply(Integer.class);
 
     @Test
     public void testFluentTemplate() throws IOException {
 
 
-        TypeDef type = new TypeDefBuilder()
+        ClassDef type = new ClassDefBuilder()
                 .withName("Circle")
                 .withPackageName("my.Test")
                 .addNewConstructor()
@@ -57,11 +57,11 @@ public class BuilderGeneratorTest {
 
     }
 
-    private static void generate(TypeDef model, File dir, String name, String templateResource) throws IOException {
+    private static void generate(ClassDef model, File dir, String name, String templateResource) throws IOException {
         FileWriter fluentWriter = null;
         try {
             fluentWriter = new FileWriter(new File(dir, name));
-            new CodeGeneratorBuilder<TypeDef>()
+            new CodeGeneratorBuilder<ClassDef>()
                     .withModel(model)
                     .withWriter(fluentWriter)
                     .withTemplateResource(templateResource)

@@ -39,7 +39,7 @@ public class ClassDef extends AbstractTypeDef<io.sundr.codegen.model.ClassDef, C
 
 
     public ClassDef(Kind kind, String packageName, String name, Set<ClassRef> annotations, Set<ClassRef> extendsList, Set<ClassRef> implementsList, List<TypeParamDef> parameters, Set<Property> properties, Set<Method> constructors, Set<Method> methods, TypeDef outerType, Set<TypeDef> innerTypes, int modifiers, Map<String, Object> attributes) {
-        super(kind, packageName, name, annotations, extendsList, implementsList, outerType, innerTypes, modifiers, attributes);
+        super(kind != null ? kind : Kind.CLASS, packageName, name, annotations, extendsList, implementsList, outerType, innerTypes, modifiers, attributes);
         this.parameters = parameters;
         this.properties = properties;
         this.constructors = adaptConstructors(constructors, this);
