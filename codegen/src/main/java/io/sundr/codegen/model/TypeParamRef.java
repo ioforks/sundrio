@@ -1,20 +1,25 @@
 /*
- * Copyright 2016 The original authors.
+ *      Copyright 2016 The original authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *          http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
  */
 
 package io.sundr.codegen.model;
+
+import io.sundr.codegen.model.*;
+import io.sundr.codegen.model.AbstractTypeRef;
+import io.sundr.codegen.model.TypeParamRefBuilder;
+import io.sundr.codegen.model.TypeRef;
 
 import java.util.Map;
 
@@ -37,7 +42,7 @@ public class TypeParamRef extends AbstractTypeRef {
         return dimensions;
     }
 
-    public TypeParamRef withDimensions(int dimensions) {
+    public io.sundr.codegen.model.TypeParamRef withDimensions(int dimensions) {
         return new TypeParamRefBuilder(this).withDimensions(dimensions).build();
     }
 
@@ -46,7 +51,7 @@ public class TypeParamRef extends AbstractTypeRef {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TypeParamRef that = (TypeParamRef) o;
+        io.sundr.codegen.model.TypeParamRef that = (io.sundr.codegen.model.TypeParamRef) o;
 
         return name != null ? name.equals(that.name) : that.name == null;
 

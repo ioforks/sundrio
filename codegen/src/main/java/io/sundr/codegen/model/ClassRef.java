@@ -1,17 +1,17 @@
 /*
- * Copyright 2016 The original authors.
+ *      Copyright 2016 The original authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *          http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
  */
 
 package io.sundr.codegen.model;
@@ -28,22 +28,18 @@ public class ClassRef extends AbstractTypeRef {
     public static final String UNKWNON = "<unkwnon>";
     public static final String BRACKETS = "[]";
 
-    public static final ClassRef OBJECT = new ClassRefBuilder()
-            .withDefinition(TypeDef.OBJECT)
-            .build();
-
-    private final TypeDef definition;
+    private final ClassDef definition;
     private final int dimensions;
     private final List<TypeRef> arguments;
 
-    public ClassRef(TypeDef definition, int dimensions, List<TypeRef> arguments, Map<String, Object> attributes) {
+    public ClassRef(ClassDef definition, int dimensions, List<TypeRef> arguments, Map<String, Object> attributes) {
         super(attributes);
-        this.definition = definition != null ? definition : new TypeDefBuilder().build();
+        this.definition = definition != null ? definition : new ClassDefBuilder().build();
         this.dimensions = dimensions;
         this.arguments = arguments;
     }
 
-    public TypeDef getDefinition() {
+    public ClassDef getDefinition() {
         return definition;
     }
 
@@ -55,7 +51,7 @@ public class ClassRef extends AbstractTypeRef {
         return arguments;
     }
 
-    public ClassRef withDimensions(int dimensions) {
+    public io.sundr.codegen.model.ClassRef withDimensions(int dimensions) {
         return new ClassRefBuilder(this).withDimensions(dimensions).build();
     }
 
@@ -75,7 +71,7 @@ public class ClassRef extends AbstractTypeRef {
             return true;
         }
 
-        if (!(other instanceof ClassRef)) {
+        if (!(other instanceof io.sundr.codegen.model.ClassRef)) {
             return false;
         }
 
@@ -86,11 +82,11 @@ public class ClassRef extends AbstractTypeRef {
         return definition.isAssignableFrom(((ClassRef) other).getDefinition());
     }
 
-    public Set<ClassRef> getReferences() {
-        Set<ClassRef> refs = new LinkedHashSet<ClassRef>();
+    public Set<io.sundr.codegen.model.ClassRef> getReferences() {
+        Set<io.sundr.codegen.model.ClassRef> refs = new LinkedHashSet<io.sundr.codegen.model.ClassRef>();
         for (TypeRef argument : arguments) {
-            if (argument instanceof ClassRef) {
-                refs.addAll(((ClassRef)argument).getReferences());
+            if (argument instanceof io.sundr.codegen.model.ClassRef) {
+                refs.addAll(((io.sundr.codegen.model.ClassRef)argument).getReferences());
             }
         }
         refs.add(this);
@@ -103,7 +99,7 @@ public class ClassRef extends AbstractTypeRef {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ClassRef classRef = (ClassRef) o;
+        io.sundr.codegen.model.ClassRef classRef = (io.sundr.codegen.model.ClassRef) o;
 
         if (dimensions != classRef.dimensions) return false;
         if (definition != null ? !definition.equals(classRef.definition) : classRef.definition != null) return false;

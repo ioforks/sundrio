@@ -1,22 +1,29 @@
 /*
- * Copyright 2016 The original authors.
+ *      Copyright 2016 The original authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *          http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
  */
 
 package io.sundr.codegen.model;
 
 import io.sundr.builder.VisitableBuilder;
+import io.sundr.codegen.model.*;
+import io.sundr.codegen.model.AttributeSupportFluentImpl;
+import io.sundr.codegen.model.ClassRef;
+import io.sundr.codegen.model.ClassRefBuilder;
+import io.sundr.codegen.model.ClassRefFluentImpl;
+import io.sundr.codegen.model.TypeParamDef;
+import io.sundr.codegen.model.TypeParamDefFluent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +32,10 @@ public class TypeParamDefFluentImpl<A extends TypeParamDefFluent<A>> extends Att
 
      String name;     List<VisitableBuilder<ClassRef, ?>> bounds = new ArrayList();
 public TypeParamDefFluentImpl(){
-    
+
 }
 public TypeParamDefFluentImpl( TypeParamDef instance ){
-    this.withName(instance.getName()); this.withBounds(instance.getBounds()); this.withAttributes(instance.getAttributes()); 
+    this.withName(instance.getName()); this.withBounds(instance.getBounds()); this.withAttributes(instance.getAttributes());
 }
 
     public String getName(){
@@ -59,11 +66,11 @@ public TypeParamDefFluentImpl( TypeParamDef instance ){
     return new BoundsNestedImpl(item);
     }
     public boolean equals( Object o){
-    
+
 if (this == o) return true;
 if (o == null || getClass() != o.getClass()) return false;
 if (!super.equals(o)) return false;
-TypeParamDefFluentImpl that = (TypeParamDefFluentImpl) o;
+io.sundr.codegen.model.TypeParamDefFluentImpl that = (io.sundr.codegen.model.TypeParamDefFluentImpl) o;
 if (name != null ? !name.equals(that.name) :that.name != null) return false;
 if (bounds != null ? !bounds.equals(that.bounds) :that.bounds != null) return false;
 return true;
@@ -73,7 +80,7 @@ return true;
     public class BoundsNestedImpl<N> extends ClassRefFluentImpl<BoundsNested<N>> implements BoundsNested<N>{
 
         private final ClassRefBuilder builder;
-    
+
              BoundsNestedImpl (){
         this.builder = new ClassRefBuilder(this);
         }
@@ -85,7 +92,7 @@ return true;
             return and();
         }
             public N and(){
-            return (N) TypeParamDefFluentImpl.this.addToBounds(builder.build());
+            return (N) io.sundr.codegen.model.TypeParamDefFluentImpl.this.addToBounds(builder.build());
         }
     
 }

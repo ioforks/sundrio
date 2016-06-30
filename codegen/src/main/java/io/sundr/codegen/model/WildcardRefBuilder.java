@@ -1,46 +1,51 @@
 /*
- * Copyright 2016 The original authors.
+ *      Copyright 2016 The original authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *          http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
  */
 
 package io.sundr.codegen.model;
 
 import io.sundr.builder.VisitableBuilder;
+import io.sundr.codegen.model.*;
+import io.sundr.codegen.model.EditableWildcardRef;
+import io.sundr.codegen.model.WildcardRef;
+import io.sundr.codegen.model.WildcardRefFluent;
+import io.sundr.codegen.model.WildcardRefFluentImpl;
 
-public class WildcardRefBuilder extends WildcardRefFluentImpl<WildcardRefBuilder> implements VisitableBuilder<WildcardRef,WildcardRefBuilder>{
+public class WildcardRefBuilder extends io.sundr.codegen.model.WildcardRefFluentImpl<WildcardRefBuilder> implements VisitableBuilder<io.sundr.codegen.model.WildcardRef,WildcardRefBuilder>{
 
-    WildcardRefFluent<?> fluent;
+    io.sundr.codegen.model.WildcardRefFluent<?> fluent;
 
     public WildcardRefBuilder(){
-            this(new WildcardRef());
+            this(new io.sundr.codegen.model.WildcardRef());
         }
-    public WildcardRefBuilder(WildcardRefFluent<?> fluent){
-            this(fluent, new WildcardRef());
+    public WildcardRefBuilder(io.sundr.codegen.model.WildcardRefFluent<?> fluent){
+            this(fluent, new io.sundr.codegen.model.WildcardRef());
         }
-    public WildcardRefBuilder(WildcardRefFluent<?> fluent,WildcardRef instance){
+    public WildcardRefBuilder(io.sundr.codegen.model.WildcardRefFluent<?> fluent, io.sundr.codegen.model.WildcardRef instance){
             this.fluent = fluent;
             fluent.withBounds(instance.getBounds());
             fluent.withAttributes(instance.getAttributes());
         }
-    public WildcardRefBuilder(WildcardRef instance){
+    public WildcardRefBuilder(io.sundr.codegen.model.WildcardRef instance){
             this.fluent = this;
             this.withBounds(instance.getBounds());
             this.withAttributes(instance.getAttributes());
         }
 
-    public EditableWildcardRef build(){
-            EditableWildcardRef buildable = new EditableWildcardRef(fluent.getBounds(),fluent.getAttributes());
+    public io.sundr.codegen.model.EditableWildcardRef build(){
+            io.sundr.codegen.model.EditableWildcardRef buildable = new io.sundr.codegen.model.EditableWildcardRef(fluent.getBounds(),fluent.getAttributes());
             validate(buildable);
             return buildable;
         }

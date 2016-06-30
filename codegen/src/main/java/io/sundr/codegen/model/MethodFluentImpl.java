@@ -1,22 +1,39 @@
 /*
- * Copyright 2016 The original authors.
+ *      Copyright 2016 The original authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *          http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
  */
 
 package io.sundr.codegen.model;
 
 import io.sundr.builder.VisitableBuilder;
+import io.sundr.codegen.model.*;
+import io.sundr.codegen.model.Block;
+import io.sundr.codegen.model.BlockBuilder;
+import io.sundr.codegen.model.BlockFluentImpl;
+import io.sundr.codegen.model.ClassRef;
+import io.sundr.codegen.model.ClassRefBuilder;
+import io.sundr.codegen.model.ClassRefFluentImpl;
+import io.sundr.codegen.model.Method;
+import io.sundr.codegen.model.MethodFluent;
+import io.sundr.codegen.model.ModifierSupportFluentImpl;
+import io.sundr.codegen.model.Property;
+import io.sundr.codegen.model.PropertyBuilder;
+import io.sundr.codegen.model.PropertyFluentImpl;
+import io.sundr.codegen.model.TypeParamDef;
+import io.sundr.codegen.model.TypeParamDefBuilder;
+import io.sundr.codegen.model.TypeParamDefFluentImpl;
+import io.sundr.codegen.model.TypeRef;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -307,7 +324,7 @@ public class MethodFluentImpl<A extends MethodFluent<A>> extends ModifierSupport
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MethodFluentImpl that = (MethodFluentImpl) o;
+        io.sundr.codegen.model.MethodFluentImpl that = (io.sundr.codegen.model.MethodFluentImpl) o;
         if (annotations != null ? !annotations.equals(that.annotations) : that.annotations != null) return false;
         if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -337,7 +354,7 @@ public class MethodFluentImpl<A extends MethodFluent<A>> extends ModifierSupport
         }
 
         public N and() {
-            return (N) MethodFluentImpl.this.addToAnnotations(builder.build());
+            return (N) io.sundr.codegen.model.MethodFluentImpl.this.addToAnnotations(builder.build());
         }
 
     }
@@ -359,7 +376,7 @@ public class MethodFluentImpl<A extends MethodFluent<A>> extends ModifierSupport
         }
 
         public N and() {
-            return (N) MethodFluentImpl.this.addToParameters(builder.build());
+            return (N) io.sundr.codegen.model.MethodFluentImpl.this.addToParameters(builder.build());
         }
 
     }
@@ -381,7 +398,7 @@ public class MethodFluentImpl<A extends MethodFluent<A>> extends ModifierSupport
         }
 
         public N and() {
-            return (N) MethodFluentImpl.this.addToArguments(builder.build());
+            return (N) io.sundr.codegen.model.MethodFluentImpl.this.addToArguments(builder.build());
         }
 
     }
@@ -403,7 +420,7 @@ public class MethodFluentImpl<A extends MethodFluent<A>> extends ModifierSupport
         }
 
         public N and() {
-            return (N) MethodFluentImpl.this.addToExceptions(builder.build());
+            return (N) io.sundr.codegen.model.MethodFluentImpl.this.addToExceptions(builder.build());
         }
 
     }
@@ -425,7 +442,7 @@ public class MethodFluentImpl<A extends MethodFluent<A>> extends ModifierSupport
         }
 
         public N and() {
-            return (N) MethodFluentImpl.this.withBlock(builder.build());
+            return (N) io.sundr.codegen.model.MethodFluentImpl.this.withBlock(builder.build());
         }
 
     }

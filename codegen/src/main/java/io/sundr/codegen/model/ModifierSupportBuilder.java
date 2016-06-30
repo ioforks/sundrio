@@ -1,24 +1,29 @@
 /*
- * Copyright 2016 The original authors.
+ *      Copyright 2016 The original authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *          http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
  */
 
 package io.sundr.codegen.model;
 
 import io.sundr.builder.VisitableBuilder;
+import io.sundr.codegen.model.*;
+import io.sundr.codegen.model.EditableModifierSupport;
+import io.sundr.codegen.model.ModifierSupport;
+import io.sundr.codegen.model.ModifierSupportFluent;
+import io.sundr.codegen.model.ModifierSupportFluentImpl;
 
-public class ModifierSupportBuilder extends ModifierSupportFluentImpl<ModifierSupportBuilder> implements VisitableBuilder<ModifierSupport,ModifierSupportBuilder>{
+public class ModifierSupportBuilder extends ModifierSupportFluentImpl<io.sundr.codegen.model.ModifierSupportBuilder> implements VisitableBuilder<ModifierSupport, io.sundr.codegen.model.ModifierSupportBuilder>{
 
      ModifierSupportFluent<?> fluent;
 
@@ -29,10 +34,10 @@ public class ModifierSupportBuilder extends ModifierSupportFluentImpl<ModifierSu
         this.fluent = fluent;
     }
     public ModifierSupportBuilder( ModifierSupportFluent<?> fluent , ModifierSupport instance ){
-        this.fluent = fluent; fluent.withModifiers(instance.getModifiers()); fluent.withAttributes(instance.getAttributes()); 
+        this.fluent = fluent; fluent.withModifiers(instance.getModifiers()); fluent.withAttributes(instance.getAttributes());
     }
     public ModifierSupportBuilder( ModifierSupport instance ){
-        this.fluent = this; this.withModifiers(instance.getModifiers()); this.withAttributes(instance.getAttributes()); 
+        this.fluent = this; this.withModifiers(instance.getModifiers()); this.withAttributes(instance.getAttributes());
     }
 
 public EditableModifierSupport build(){
@@ -46,7 +51,7 @@ public boolean equals( Object o ){
 if (this == o) return true;
 if (o == null || getClass() != o.getClass()) return false;
 if (!super.equals(o)) return false;
-ModifierSupportBuilder that = (ModifierSupportBuilder) o;
+io.sundr.codegen.model.ModifierSupportBuilder that = (io.sundr.codegen.model.ModifierSupportBuilder) o;
 if (fluent != null &&fluent != this ? !fluent.equals(that.fluent) :that.fluent != null &&fluent != this ) return false;
 return true;
 
